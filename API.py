@@ -3,28 +3,32 @@ import requests
 
 url = 'https://www.notexponential.com/aip2pgaming/api/index.php'
 
+headers = {
+    'User-Agent': 'PostmanRuntime/7.31.3',
+    'Accept': '*/*',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Connection': 'close',
+    'x-api-key': '347b85f18bd488493e87',
+    'userId': '1133',
+}
+
 
 class API:
 
-    def getBoard():
+    def get_board_string():
         url = "https://www.notexponential.com/aip2pgaming/api/index.php?type=boardString&gameId=3724"
-        headers = {
-            'x-api-key': '347b85f18bd488493e87',
-            'userId': '1133'
-        }
+
         payload = {}
+
         params = {
             'type': 'boardString',
             'gameId': '3724'
         }
 
-        response = requests.request("GET", url, headers=headers,
-                                    params=params, data=payload)
+        response = requests.request(
+            "GET", url, params=params, headers=headers, data=payload)
 
-        if response.status_code == 200:
-            print(response.text)
-        else:
-            print(f'Request failed with status code {response.status_code}')
+        print(response.text)
 
 
-API.getBoard()
+API.get_board_string()
