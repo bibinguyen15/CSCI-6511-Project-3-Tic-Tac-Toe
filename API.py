@@ -15,14 +15,14 @@ headers = {
 
 class API:
 
-    def get_board_string():
+    def get_board_string(gameID):
         url = "https://www.notexponential.com/aip2pgaming/api/index.php?type=boardString&gameId=3724"
 
         payload = {}
 
         params = {
             'type': 'boardString',
-            'gameId': '3724'
+            'gameId': gameID
         }
 
         response = requests.request(
@@ -31,4 +31,4 @@ class API:
         print(response.text)
 
 
-API.get_board_string()
+API.get_board_string(3724)
