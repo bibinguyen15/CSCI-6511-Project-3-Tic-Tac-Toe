@@ -1,6 +1,11 @@
 import time
 from API import API
 import json
+import copy
+
+
+MIN = float('-inf')
+MAX = float('inf')
 
 
 class TTT:
@@ -9,7 +14,7 @@ class TTT:
         self.target = target
         self.players = ['O', 'X']
         self.board = []
-        #self.board = [['-'] * boardSize] * boardSize
+        # self.board = [['-'] * boardSize] * boardSize
         self.available = []
         for x in range(boardSize):
             row = []
@@ -59,112 +64,131 @@ class TTT:
         return 1
 
     def next(self, player):
-        bestVal = float('-inf')
+        bestVal = MIN
         bestMove = (-1, -1)
+        moveScore = {}
 
         # Trying to find the best move for "player"
         for cell in self.available:
+            print("Available moves:", self.available, "chosen move:", cell)
+
             # Make the move
             self.board[cell[0]][cell[1]] = self.players[player]
             self.drawBoard()
-            self.available.remove(cell)
 
-            # computer minimax of this move
-            move = self.minimax(0, False, player)
+            currentAvai = self.available.copy()
+            currentAvai.remove(cell)
 
+            # compute minimax of this move
+            move = self.minimax(0, False, player, currentAvai, MIN, MAX)
+
+            moveScore[tuple(cell)] = move
             # Undo the move
             self.board[cell[0]][cell[1]] = '-'
-            self.available.append(cell)
 
             # If the current move is better, then update
 
             if move > bestVal:
                 bestMove, bestVal = tuple(cell), move
-        print(bestMove)
+
+        print(bestMove, "Move scores:", moveScore)
         return bestMove
 #
 
-    def minimax(self, depth, isMax, player):
-        end = self.win()
+    def minimax(self, depth, isMax, player, available, alpha, beta):
+        end = self.win(available)
         print("End", end)
 
         # if the game has ended
         if (end != None):
             if end == self.players[player]:
                 print("Returning 10")
-                return 10
+                return 10 - depth
             elif end == self.players[player - 1]:
                 print("Returning -10")
-                return -10
+                return -10 + depth
             else:
                 print("Returning 0")
                 return 0
 
-        self.drawBoard()
+        print("Depth:", depth, "- Player priority:", self.players[player],
+              "- Is maximzing?", isMax)
+
         # if not, is it the maximizing player's turn?
         if isMax:
-            best = float('-inf')
+            best = MIN
             # print("The move for maximizing player", player,
             # "at depth:", depth, "Scores:")
-            for cell in self.available:
+            for cell in available:
                 # make the move
                 self.board[cell[0]][cell[1]] = self.players[player]
-                self.available.remove(cell)
 
-                print("Depth:", depth, "\nPlayer's turn:", self.players[player],
-                      "is maximzing?", isMax)
+                currentAvai = available.copy()
+                currentAvai.remove(cell)
+
                 self.drawBoard()
 
-                score = self.minimax(depth + 1, False, player)
-                best = max(best, score)
-                print(score, end=", ")
-
                 # Call minimax recursively and choose the maximum value
-                # best=max(best, self.minimax(depth + 1, False, player))
+                score = self.minimax(
+                    depth + 1, False, player, currentAvai, alpha, beta)
+                best = max(best, score)
+
+                alpha = max(alpha, best)
+
                 print("Score:", score)
 
                 # undo move
                 self.board[cell[0]][cell[1]] = '-'
-                self.available.append(cell)
+
+                if beta <= alpha:
+                    break
+
             print("Chosen", best, "for maximizing")
             return best
 
         # minimizer's move
         else:
-            best = float('inf')
+            best = MAX
 
-            for cell in self.available:
+            for cell in available:
                 # make the move
                 self.board[cell[0]][cell[1]] = self.players[player - 1]
-                self.available.remove(cell)
 
-                print("Depth:", depth, "\nPlayer's turn:", self.players[player - 1],
-                      "is maximzing?", isMax)
+                currentAvai = available.copy()
+                currentAvai.remove(cell)
+
                 self.drawBoard()
 
-                score = self.minimax(depth + 1, True, player)
-                best = min(best, score)
-                print(score, end=", ")
-
                 # call minimax and choose minimum value
-                # best = min(best, self.minimax(depth + 1, True, player))
+                score = self.minimax(
+                    depth + 1, True, player, currentAvai, alpha, beta)
+                best = min(best, score)
+                beta = min(beta, best)
+
                 print("Score:", score)
 
                 # undo move
                 self.board[cell[0]][cell[1]] = '-'
-                self.available.append(cell)
+
+                if beta <= alpha:
+                    break
 
             print("Chosen", best, "for minimizing")
             return best
 
     #
+    def totalMoves(self):
+        print("Available spots:", len(self.available))
+        print("Total available spots:", self.boardSize ** 2)
+        print("Moves:", self.boardSize ** 2 - self.target * 2 + 1)
+        print((self.boardSize ** 2 - self.target * 2 + 1 >= len(self.available)))
 
-    def win(self):
+    def win(self, available):
         # because there's no way the game can complete
         # without at least reaching target *2 - 1 moves
+
+        # if (self.boardSize ** 2 - self.target * 2 + 1 >= len(self.available)):
         if(True):
-            # sif (len(self.available) + self.target) >= (self.boardSize**2):
-            # if len(self.available) + 2 * self.target - 1 >= self.boardSize ** 2:
             winner = ''
             adjacent = [self.board[0][0], 0]
 
@@ -210,7 +234,7 @@ class TTT:
                             return value[0]
 
             # Check tie
-            if len(self.available) == 0:
+            if len(available) == 0:
                 return True
 
 
@@ -237,7 +261,7 @@ def sendToAPI(game):
 def main():
     game = TTT()
 
-    sendToAPI(game)
+    # sendToAPI(game)
     #game.setBoard("X--\n-O-\nX--\n", 3)
 
     #game.setBoard("X--\nOO-\nX--\n", 3)
@@ -250,8 +274,9 @@ def main():
     # game.setBoard("O-----------\nOO----------\n---O--------\n------------\n------------\n------------\n------------\n------------\n------------\n------------\n------------\n------------\n")
     game.drawBoard()
 
-    '''
-    print("Winner is:", game.win())
+    # game.totalMoves()
+
+    print("Winner is:", game.win(game.available))
 
     while(True):
         player = int(input("Player: "))
@@ -260,13 +285,15 @@ def main():
         end = time.time_ns()
         print("Time taken", end - start, "ns")
         print("__________________________________________________________________")
-        if game.win() != None:
-            print(game.win())
-            print(game.available)
 
+        gameEnd = game.win(game.available)
+        if gameEnd != None:
+            if gameEnd == True:
+                print("It's a draw.")
+            else:
+                print("Winner:", gameEnd)
             print("Game ended.")
             break
-            '''
 
 
 if __name__ == '__main__':
