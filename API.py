@@ -12,7 +12,7 @@ headers = {
     'userId': '1133',
 }
 
-gameId = '3887'
+gameId = '3975'
 
 
 class API:

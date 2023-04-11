@@ -9,16 +9,16 @@ MAX = float('inf')
 
 
 class TTT:
-    def __init__(self, boardSize=3, target=3):
-        self.boardSize = boardSize
+    def __init__(self, size=3, target=3):
+        self.size = size
         self.target = target
         self.players = ['O', 'X']
         self.board = []
-        # self.board = [['-'] * boardSize] * boardSize
+        # self.board = [['-'] * size] * size
         self.available = []
-        for x in range(boardSize):
+        for x in range(size):
             row = []
-            for y in range(boardSize):
+            for y in range(size):
                 row.append('-')
                 self.available.append([x, y])
             self.board.append(row)
@@ -32,7 +32,7 @@ class TTT:
                 print(i, end="|")
             print()
 
-        # print("Game details:", self.boardSize, "-", self.target)
+        # print("Game details:", self.size, "-", self.target)
 
     def setBoard(self, board, target=-1):
         self.board = board.split('\n')[:-1]
@@ -48,9 +48,9 @@ class TTT:
         # print(self.available)
 
         print(self.board)
-        self.boardSize = len(self.board)
+        self.size = len(self.board)
         if target == -1:
-            self.target = int(self.boardSize / 2)
+            self.target = int(self.size / 2)
         else:
             self.target = target
 
@@ -60,38 +60,99 @@ class TTT:
         self.board[move[0]][move[1]] = self.players[player]
         self.drawBoard()
 
-    def heu(self):
-        return 1
+    def heu(self, player):
+        score = 0
+
+        # evaluate row:
+        for row in self.board:
+            score += self.perLine(row, player)
+
+        # evaluate column
+        for j in range(self.size):
+            score += self.perLine([self.board[i][j]
+                                  for i in range(self.size)], player)
+
+        # evaluate diagonal
+        dStart = -(self.size - self.target)
+        dEnd = -dStart
+
+        for i in range(dStart, dEnd + 1):
+
+            score += self.perLine([self.board[k][i + k] for k in range(
+                max(-i, 0), min(self.size, self.size - i))], player)
+
+            score += self.perLine([self.board[j][self.size - j - i - 1]
+                                  for j in range(max(-i, 0), min(self.size, self.size - i))], player)
+
+        return score
+
+    def perLine(self, line, player):
+        points = {self.players[player]: 1, self.players[player - 1]: -1}
+
+        score, count, last, neutral = 0, 0, 0, 0
+        interrupted = False
+
+        for x in line:
+
+            if x == '-':
+                neutral += 1
+                if count != 0:
+                    interrupted = True
+            elif x == last:
+                count += 1
+                if count == self.target and not interrupted:
+                    return 100 * points[x]
+            elif (x == 'O' or x == 'X') and last != 0:
+                if neutral + count >= self.target:
+                    score += count * points[last]
+                count = 1
+                last = x
+                neutral = 0
+            else:
+                last = x
+                count = 1
+
+        if neutral + count >= self.target and last != 0:
+            score += count * points[last]
+
+        return score
+#
+#
 
     def next(self, player):
-        bestVal = MIN
-        bestMove = (-1, -1)
-        moveScore = {}
+        if len(self.available) == self.size ** 2:
+            bestMove = (0, 0)
+        elif [1, 1] in self.available:
+            bestMove = (1, 1)
+        else:
+            bestVal = MIN
+            bestMove = (-1, -1)
+            moveScore = {}
 
-        # Trying to find the best move for "player"
-        for cell in self.available:
-            print("Available moves:", self.available, "chosen move:", cell)
+            # Trying to find the best move for "player"
+            for cell in self.available:
+                print("Available moves:", self.available, "chosen move:", cell)
 
-            # Make the move
-            self.board[cell[0]][cell[1]] = self.players[player]
-            self.drawBoard()
+                # Make the move
+                self.board[cell[0]][cell[1]] = self.players[player]
+                self.drawBoard()
 
-            currentAvai = self.available.copy()
-            currentAvai.remove(cell)
+                currentAvai = self.available.copy()
+                currentAvai.remove(cell)
 
-            # compute minimax of this move
-            move = self.minimax(0, False, player, currentAvai, MIN, MAX)
+                # compute minimax of this move
+                move = self.minimax(0, False, player, currentAvai, MIN, MAX)
 
-            moveScore[tuple(cell)] = move
-            # Undo the move
-            self.board[cell[0]][cell[1]] = '-'
+                moveScore[tuple(cell)] = move
+                # Undo the move
+                self.board[cell[0]][cell[1]] = '-'
 
-            # If the current move is better, then update
+                # If the current move is better, then update
 
-            if move > bestVal:
-                bestMove, bestVal = tuple(cell), move
+                if move > bestVal:
+                    bestMove, bestVal = tuple(cell), move
 
-        print(bestMove, "Move scores:", moveScore)
+            print(bestMove, "Move scores:", moveScore)
         return bestMove
 #
 
@@ -102,14 +163,18 @@ class TTT:
         # if the game has ended
         if (end != None):
             if end == self.players[player]:
-                print("Returning 10")
-                return 10 - depth
+                return 100 - depth
             elif end == self.players[player - 1]:
-                print("Returning -10")
-                return -10 + depth
+                return -100 + depth
             else:
-                print("Returning 0")
                 return 0
+
+        if depth == 7:
+            heu = self.heu(player)
+            if heu >= 0:
+                return heu - depth
+            else:
+                return heu + depth
 
         print("Depth:", depth, "- Player priority:", self.players[player],
               "- Is maximzing?", isMax)
@@ -126,7 +191,7 @@ class TTT:
                 currentAvai = available.copy()
                 currentAvai.remove(cell)
 
-                self.drawBoard()
+                # self.drawBoard()
 
                 # Call minimax recursively and choose the maximum value
                 score = self.minimax(
@@ -157,7 +222,7 @@ class TTT:
                 currentAvai = available.copy()
                 currentAvai.remove(cell)
 
-                self.drawBoard()
+                # self.drawBoard()
 
                 # call minimax and choose minimum value
                 score = self.minimax(
@@ -177,27 +242,20 @@ class TTT:
             return best
 
     #
-    def totalMoves(self):
-        print("Available spots:", len(self.available))
-        print("Total available spots:", self.boardSize ** 2)
-        print("Moves:", self.boardSize ** 2 - self.target * 2 + 1)
-        print((self.boardSize ** 2 - self.target * 2 + 1 >= len(self.available)))
-
     def win(self, available):
         # because there's no way the game can complete
         # without at least reaching target *2 - 1 moves
+        winner = ''
+        adjacent = [self.board[0][0], 0]
 
-        # if (self.boardSize ** 2 - self.target * 2 + 1 >= len(self.available)):
-        if(True):
-            winner = ''
-            adjacent = [self.board[0][0], 0]
-
-            # First check row
-            for row in self.board:
-                adjacent = [row[0], 0]
-                for item in row:
+        # First check row
+        for row in self.board:
+            adjacent = [row[0], 0]
+            empty = 0
+            for item in row:
+                if item != '-':
                     # if match
-                    if item == adjacent[0] and item != '-':
+                    if item == adjacent[0]:
                         adjacent[1] += 1
                         # print(adjacent)
                         if adjacent[1] == self.target:
@@ -205,37 +263,39 @@ class TTT:
                     else:
                         adjacent = [item, 1]
 
-            # Check column
-            for j in range(self.boardSize):
-                adjacent = [self.board[0][j], 0]
-                for i in range(self.boardSize):
-                    if self.board[i][j] == adjacent[0] and self.board[i][j] != '-':
+        # Check column
+        for j in range(self.size):
+            adjacent = [self.board[0][j], 0]
+            for i in range(self.size):
+                if self.board[i][j] != '-':
+                    if self.board[i][j] == adjacent[0]:
                         adjacent[1] += 1
                         if adjacent[1] == self.target:
                             return self.board[i][j]
                     else:
                         adjacent = [self.board[i][j], 1]
 
-            # Check diagonal
-            for i in range(self.boardSize):
-                for j in range(self.boardSize + 1 - self.target):
-                    if (i + self.target) <= self.boardSize:
+        # Check diagonal
+        for i in range(self.size):
+            for j in range(self.size + 1 - self.target):
+                if self.board[i][j] != '-':
+                    if (i + self.target) <= self.size:
                         value = [self.board[i + k][j + k]
                                  for k in range(self.target)]
 
-                        if all(elem == value[0] for elem in value) and value[0] != '-':
+                        if all(elem == value[0] for elem in value):
                             return value[0]
                     elif(i - self.target + 1) >= 0:
 
                         value = [self.board[i - k][j + k]
                                  for k in range(self.target)]
 
-                        if all(elem == value[0] for elem in value) and value[0] != '-':
+                        if all(elem == value[0] for elem in value):
                             return value[0]
 
-            # Check tie
-            if len(available) == 0:
-                return True
+        # Check tie
+        if len(available) == 0:
+            return True
 
 
 def processString(gameId):
@@ -247,9 +307,10 @@ def processString(gameId):
 
 
 def sendToAPI(game):
-    board, target = processString('3887')
+    board, target = processString('3975')
 
     game.setBoard(board, target)
+    game.drawBoard()
 
     move = game.next(0)
     print(move)
@@ -261,29 +322,34 @@ def sendToAPI(game):
 def main():
     game = TTT()
 
-    # sendToAPI(game)
-    #game.setBoard("X--\n-O-\nX--\n", 3)
+    sendToAPI(game)
 
-    #game.setBoard("X--\nOO-\nX--\n", 3)
+    # game.setBoard("X--\n-O-\nX--\n", 3)
 
-    #game.setBoard("X--\nOOX\nX--\n", 3)
+    # game.setBoard("X--\nOO-\nX--\n", 3)
 
-    #game.setBoard("XO-\nOOX\nX--\n", 3)
+    # game.setBoard("X--\nOOX\nX--\n", 3)
 
-    #game.setBoard("XO-\nOOX\nXX-\n", 3)
-    # game.setBoard("O-----------\nOO----------\n---O--------\n------------\n------------\n------------\n------------\n------------\n------------\n------------\n------------\n------------\n")
-    game.drawBoard()
+    # game.setBoard("XO-\nOOX\nX--\n", 3)
 
-    # game.totalMoves()
+    # game.setBoard("----\n-O--\n----\n----\n", 3)
+
+    #game.setBoard("OOX-\nXXO-\nO--X\n----\n", 3)
+
+    # game.drawBoard()
+
+
+'''
+    #print(game.perLine(['O', 'O', 'O', '-'], 0))
 
     print("Winner is:", game.win(game.available))
 
     while(True):
         player = int(input("Player: "))
-        start = time.time_ns()
+        start = time.time()
         game.makeMove(game.next(player), player)
-        end = time.time_ns()
-        print("Time taken", end - start, "ns")
+        end = time.time()
+        print("Time taken", end - start, "s")
         print("__________________________________________________________________")
 
         gameEnd = game.win(game.available)
@@ -295,6 +361,7 @@ def main():
             print("Game ended.")
             break
 
+'''
 
 if __name__ == '__main__':
     main()
