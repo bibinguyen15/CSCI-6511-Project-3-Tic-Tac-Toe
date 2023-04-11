@@ -31,7 +31,27 @@ class TTT:
             self.target = target
 
     def heu(self):
-        return 1
+         for i in range(self.boardSize):
+             if board[i][0] == board[i][1] and board[i][1] == board[i][2]:
+                  if board[i][0] == self.players[1]:
+                       return 10
+                  elif board[i][0] == self.players[0]:
+                       return -10
+        
+        # Check diagonal
+         for i in range(self.boardSize):
+              for j in range(self.boardSize + 1 - self.target):
+                   if (i + self.target) <= self.boardSize:
+                    value = [self.board[i + k][j + k]
+                                 for k in range(self.target)]
+                    if all(elem == value[0] for elem in value) and value[0] != '-':
+                            return value[0]
+                    elif(i - self.target + 1) >= 0:
+                        value = [self.board[i - k][j + k]
+                                 for k in range(self.target)]
+
+                        if all(elem == value[0] for elem in value) and value[0] != '-':
+                            return value[0]
     
     def min_max(self, board, depth, nodeIndex, isMax, player, alpha, beta) :  
         if (isMax):
@@ -123,10 +143,10 @@ class TTT:
 def main():
     game = TTT(4, 4)
 
-    game.setBoard("XOXO\nXOXO\nXOOX\nOX--\n", 4)
+    game.setBoard("XXOX\n-OO-\n--O-\n----\n", 4)
     # game.setBoard("O-----------\nOO----------\n---O--------\n------------\n------------\n------------\n------------\n------------\n------------\n------------\n------------\n------------\n")
     game.drawBoard()
-    game.next(0)
+    game.next(1)
     print("Winner is:", game.win())
 
 
