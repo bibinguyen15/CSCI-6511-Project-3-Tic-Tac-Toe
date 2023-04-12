@@ -243,8 +243,7 @@ class TTT:
 
     #
     def win(self, available):
-        # because there's no way the game can complete
-        # without at least reaching target *2 - 1 moves
+
         winner = ''
         adjacent = [self.board[0][0], 0]
 
