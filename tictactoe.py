@@ -9,12 +9,25 @@ class Board:
         self.board = np.zeros((size, size), dtype=np.int8)
         self.players = ['O', 'X']
         self.user = user
-        self.over = False
+        self.win = False
+        self.winner = 0
+
+    def getUser(self):
+        return self.user
+
+    def getPlayer(self, player):
+        return self.players[player]
+
+    def continueGame(self):
+        self.win = False
 
     def gameOver(self):
-        return self.over
+        return self.win
 
-    def emptySpots(self):
+    def getWinner(self):
+        return self.winner
+
+    def available(self):
         return np.argwhere(self.board == 0)
 
     def isFull(self):
@@ -25,6 +38,9 @@ class Board:
 
     def printBoard(self):
         print(self.board)
+
+    def getBoard(self):
+        return self.board
 
     def drawBoard(self):
         for row in self.board:
@@ -47,7 +63,8 @@ class Board:
             self.board[move[0]][move[1]] = -1
             turn = -1
 
-        self.over = self.checkGameOver(move, turn)
+        self.win = self.checkWin(move, turn)
+        self.winner = turn
 
     def remove(self, move):
         self.board[move[0]][move[1]] = 0
@@ -67,34 +84,34 @@ class Board:
                 elif self.board[move[0]][move[1]] == -1:
                     self.board[move[0]][move[1]] = 1
 
-    def setBoard(self, board, target=-1, user=0):
-        board = board.split('\n')[:-1]
+    def setBoard(self, boardStr, target=-1, user=0):
+        boardStr = boardStr.split('\n')[:-1]
 
         self.user = user
         player = self.players[self.user]
         other = self.players[self.user - 1]
 
-        for i in range(len(board)):
+        for i in range(len(boardStr)):
             row = []
-            for pos in board[i]:
+            for pos in boardStr[i]:
                 if pos == '-':
                     row.append(0)
                 elif pos == player:
                     row.append(1)
                 else:
                     row.append(-1)
-            board[i] = row
+            boardStr[i] = row
 
-        self.board = np.array(board)
+        self.board = np.array(boardStr)
 
-        self.size = len(board)
+        self.size = len(boardStr)
 
         if target == -1:
             self.target = int(self.size / 2)
         else:
             self.target = target
 
-    def checkGameOver(self, move, turn):
+    def checkWin(self, move, turn):
 
         x, y = move
         count = 0
@@ -121,6 +138,46 @@ class Board:
             return True
 
         # Check diagonal
+        # Top left diagonal
+        count = 0
+        left = np.diagonal(self.board, y - x)
+
+        if len(left) >= self.target:
+            for i in range(len(left)):
+                if left[i] == turn:
+                    count += 1
+                else:
+                    count = 0
+        if count == self.target:
+            return True
+
+        # Top right diagonal
         count = 0
 
+        flip = np.fliplr(self.board)
+
+        right = np.fliplr(self.board).diagonal(self.size - 1 - y - x)
+
+        if len(right) >= self.target:
+            for i in range(len(right)):
+                if right[i] == turn:
+                    count += 1
+                else:
+                    count = 0
+        if count == self.target:
+            return True
+
         return False
+
+
+#board = Board()
+#board.setBoard("OO--\nO--X\nO-XX\nXX-X\n", 3)
+# board.printBoard()
+
+#a = board.getBoard()
+#array = np.array([a[i][1] for i in range(len(a))])
+# print(array)
+
+#winner = -1
+#depth = 3
+#print(1000 * winner - depth if winner == 1 else 1000 * winner + depth)

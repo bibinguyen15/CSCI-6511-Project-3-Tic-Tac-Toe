@@ -1,28 +1,27 @@
 from tictactoe import Board
-from time import *
+import time
 from minimax import *
 
-boardSize = 4
-target = 4
+boardSize = 3
+target = 3
 user = 0
 
 
 def main():
-    game = Board(boardSize, target, user)
+    #game = Board(boardSize, target, user)
 
-    game.setBoard("OOX-\nOXO-\nO--X\n----\n", 4)
+    # game.drawBoard()
 
-    game.drawBoard()
+    # game.printBoard()
 
-    game.printBoard()
+    # game.switchUser(1)
 
-    game.switchUser(1)
+    # game.printBoard()
 
-    game.printBoard()
+    # game.drawBoard()
 
-    game.drawBoard()
-
-    print(nextMove(game, 0))
+    #print(nextMove(game, 1))
+    localPlay()
 
 
 def localPlay():
@@ -31,22 +30,28 @@ def localPlay():
 
     while(True):
         player = int(input("Player's turn: "))
+        if game.getUser() != player:
+            game.switchUser(player)
 
         start = time.time()
 
-        game.add(nextMove(game, player))
+        game.add(nextMove(game, player), player)
 
         end = time.time()
+
+        game.drawBoard()
         print("Time taken", end - start, "s")
         print("__________________________________________________________________")
 
-        gameEnd = game.win(game.available)
-        if gameEnd != None:
-            if gameEnd == True:
-                print("It's a draw.")
+        if game.isFull():
+            print("It's a draw.")
+            break
+        elif game.gameOver():
+            print("Winner:", end=" ")
+            if game.getWinner() == 1:
+                print(game.getPlayer(player))
             else:
-                print("Winner:", gameEnd)
-            print("Game ended.")
+                print(game.getPlayer(player - 1))
             break
 
 
