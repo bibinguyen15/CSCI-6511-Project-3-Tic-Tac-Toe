@@ -24,6 +24,7 @@ def minimax(board, depth, isMax, player, alpha=MIN, beta=MAX):
         print("winner is", board.getWinner())
 
         winner = board.getWinner()
+
         board.continueGame()
         return (1000 * winner - depth if winner == 1 else 1000 * winner + depth)
     elif board.isFull():
