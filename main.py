@@ -2,8 +2,8 @@ from tictactoe import Board
 import time
 from minimax import *
 
-boardSize = 3
-target = 3
+boardSize = 10
+target = 5
 user = 0
 
 

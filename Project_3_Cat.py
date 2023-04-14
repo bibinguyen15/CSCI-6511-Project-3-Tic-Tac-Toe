@@ -333,7 +333,7 @@ def main():
 
     # game.setBoard("----\n-O--\n----\n----\n", 3)
 
-    #game.setBoard("OOX-\nXXO-\nO--X\n----\n", 3)
+    # game.setBoard("OOX-\nXXO-\nO--X\n----\n", 3)
 
     # game.drawBoard()
 

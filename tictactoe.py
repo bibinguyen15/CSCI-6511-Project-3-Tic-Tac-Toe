@@ -9,11 +9,18 @@ class Board:
         self.board = np.zeros((size, size), dtype=np.int8)
         self.players = ['O', 'X']
         self.user = user
+        self.other = 0 if user == 1 else 1
         self.win = False
         self.winner = 0
 
+    def getSize(self):
+        return self.size
+
     def getUser(self):
         return self.user
+
+    def getOther(self):
+        return self.other
 
     def getPlayer(self, player):
         return self.players[player]
@@ -75,6 +82,7 @@ class Board:
     def switchUser(self, user):
         if user != self.user:
             self.user = user
+            self.other = 0 if user == 1 else 1
 
             moves = np.argwhere(self.board != 0)
 
@@ -171,6 +179,9 @@ class Board:
 
 
 #board = Board()
+# board.switchUser(1)
+# print(board.getOther())
+
 #board.setBoard("OO--\nO--X\nO-XX\nXX-X\n", 3)
 # board.printBoard()
 
