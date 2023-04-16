@@ -1,4 +1,6 @@
 import requests
+import constants
+import json
 
 
 url = 'https://www.notexponential.com/aip2pgaming/api/index.php'
@@ -9,13 +11,31 @@ headers = {
     'Accept-Encoding': 'gzip, deflate, br',
     'Connection': 'close',
     'x-api-key': '347b85f18bd488493e87',
-    'userId': '1133',
+    'userId': constants.userId,
 }
 
-gameId = '3887'
+gameId = '4000'
 
 
 class API:
+    def createAGame(boardSize=3, target=3):
+        url = "https://www.notexponential.com/aip2pgaming/api/index.php"
+
+        payload = {'type': 'game',
+                   'teamId1': constants.teamId,
+                   'teamId2': constants.teamId2,
+                   'gameType': 'TTT',
+                   'boardSize': boardSize,
+                   'target': target}
+
+        response = requests.request(
+            "POST", url, headers=headers, data=payload)
+
+        gameDetails = json.loads(response.text)
+        code, gameId = gameDetails['code'], gameDetails['gameId']
+        print(gameDetails)
+
+        return gameId
 
     def getBoardString(gameID):
         url = "https://www.notexponential.com/aip2pgaming/api/index.php?type=boardString&gameId=3724"
@@ -30,7 +50,11 @@ class API:
         response = requests.request(
             "GET", url, params=params, headers=headers, data=payload)
 
-        return response.text
+        strMap = json.loads(response.text)
+        print(strMap)
+        board, target = strMap['output'], strMap['target']
+
+        return board, target
 
     def makeMove(move):
 
@@ -49,4 +73,5 @@ class API:
 
 # API.get_board_string(3724)
 #API.makeMove('1, 3')
-API.getBoardString(3724)
+# API.getBoardString(3724)
+API.getBoardString(gameId)
