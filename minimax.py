@@ -1,28 +1,63 @@
 from tictactoe import Board
 import constants
-
-#maxDepth = constants.maxDepth
-maxDepth = 3
-MIN = float('-inf')
-MAX = float('inf')
+from constants import *
+import numpy as np
 
 
 def heuristic(board):
     score = 0
+    target = board.getTarget()
+
+    currentBoard = board.getBoard()
+    size = board.getSize()
 
     # evaluate row
-    for row in board.getBoard():
-        score += perLine(row)
+    for row in currentBoard:
+        score += perLine(row, target)
 
     # evaluate column
+    for j in range(size):
+        score += perLine(currentBoard[:, j], target)
+
+    for i in range(1 - size, size):
+        score += perLine(np.diagonal(currentBoard, i), target)
+        score += perLine(np.fliplr(currentBoard).diagonal(i), target)
+
+    # evaluate diagonal
+    return score
+
+
+def perLine(line, target):
+    if len(line) >= target:
+        print("Line being evaluated:", line)
+        score, count, last, neutral = 0, 0, 0, 0
+        interrupted = False
+
+        for x in line:
+            if x == 0:
+                neutral += 1
+                if count != 0:
+                    interrupted = True
+            elif x == last:
+                count += 1
+                if count == target and not interrupted:
+                    return 1000 * x
+            elif x != last and last != 0:
+                if neutral + count >= target:
+                    score += (count * 2 + neutral) * last
+                count = 1
+                last = x
+                neutral = 0
+
+            else:
+                last = x
+                count = 1
+
+        return score
     return 0
 
 
-def perLine(line):
-    return 1
-
-
-def minimax(board, depth, isMax, alpha=MIN, beta=MAX):
+def minimax(board, depth, isMax, alpha=constants.MIN, beta=MAX):
 
     if board.gameOver():
 
@@ -33,8 +68,9 @@ def minimax(board, depth, isMax, alpha=MIN, beta=MAX):
     elif board.isFull():
         return 0
 
-    elif depth == maxDepth:
-        return heuristic(board)
+    elif depth == constants.maxDepth:
+        return 1
+        # return heuristic(board)
 
     # if not, is it the maximizing player's turn?
     if isMax:
@@ -89,6 +125,7 @@ def minimax(board, depth, isMax, alpha=MIN, beta=MAX):
 
 
 def nextMove(board, player):
+
     if board.isEmpty():
         bestMove = [board.getSize() // 2, board.getSize() // 2]
     else:
@@ -115,9 +152,5 @@ def nextMove(board, player):
                 bestMove, bestVal = cell, move
 
     return bestMove
-
-    # else:
-    # bestVal = MIN
-    # bestMove = (-1, -1)
 
 

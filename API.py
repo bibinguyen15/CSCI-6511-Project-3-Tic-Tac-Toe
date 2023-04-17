@@ -1,7 +1,7 @@
 import requests
 import constants
 import json
-
+from constants import *
 
 url = 'https://www.notexponential.com/aip2pgaming/api/index.php'
 
@@ -10,68 +10,119 @@ headers = {
     'Accept': '*/*',
     'Accept-Encoding': 'gzip, deflate, br',
     'Connection': 'close',
-    'x-api-key': '347b85f18bd488493e87',
+    'x-api-key': '2853f0b95c015dc248ed',
     'userId': constants.userId,
 }
 
 gameId = '4000'
+teamId = constants.teamId
 
 
-class API:
-    def createAGame(boardSize=3, target=3):
-        url = "https://www.notexponential.com/aip2pgaming/api/index.php"
+def getMoves(gameId, count=1):
+    url = constants.GET_MOVES + str(gameId) + "&count=" + str(count)
 
-        payload = {'type': 'game',
-                   'teamId1': constants.teamId,
-                   'teamId2': constants.teamId2,
-                   'gameType': 'TTT',
-                   'boardSize': boardSize,
-                   'target': target}
+    params = {
+        'type': 'moves',
+        'gameId': gameId,
+        'count': count
+    }
+    response = requests.request(
+        "GET", url, params=params, headers=headers)
 
-        response = requests.request(
-            "POST", url, headers=headers, data=payload)
+    jsonData = json.loads(response.text)
+    moveDetails = jsonData["moves"][0]
 
-        gameDetails = json.loads(response.text)
-        code, gameId = gameDetails['code'], gameDetails['gameId']
-        print(gameDetails)
+    if jsonData['code'] == 'FAIL':
+        return 'FAIL'
 
-        return gameId
+    return {'teamId': moveDetails['teamId'],
+            'x': int(moveDetails['moveX']), 'y': int(moveDetails['moveY'])}
 
-    def getBoardString(gameID):
-        url = "https://www.notexponential.com/aip2pgaming/api/index.php?type=boardString&gameId=3724"
 
-        payload = {}
+def createAGame(teamId2, boardSize=5, target=5):
+    url = "https://www.notexponential.com/aip2pgaming/api/index.php"
 
-        params = {
-            'type': 'boardString',
-            'gameId': gameID
-        }
+    payload = {'type': 'game',
+               'teamId1': constants.teamId,
+               'teamId2': teamId2,
+               'gameType': 'TTT',
+               'boardSize': boardSize,
+               'target': target}
 
-        response = requests.request(
-            "GET", url, params=params, headers=headers, data=payload)
+    response = requests.request(
+        "POST", url, headers=headers, data=payload)
 
-        strMap = json.loads(response.text)
-        print(strMap)
-        board, target = strMap['output'], strMap['target']
+    gameDetails = json.loads(response.text)
+    code, gameId = gameDetails['code'], gameDetails['gameId']
 
-        return board, target
+    if code == 'FAIL':
+        return code
 
-    def makeMove(move):
+    return gameId
 
-        url = "https://www.notexponential.com/aip2pgaming/api/index.php"
 
-        payload = {'type': 'move',
-                   'gameId': gameId,
-                   'teamId': '1349',
-                   'move': move}
+def getBoardString(gameID):
+    url = "https://www.notexponential.com/aip2pgaming/api/index.php?type=boardString&gameId=3724"
 
-        response = requests.request(
-            "POST", url, headers=headers, data=payload)
+    payload = {}
 
-        print(response.text)
+    params = {
+        'type': 'boardString',
+        'gameId': gameID
+    }
+
+    response = requests.request(
+        "GET", url, params=params, headers=headers, data=payload)
+
+    strMap = json.loads(response.text)
+    print(strMap)
+    board, target = strMap['output'], strMap['target']
+
+    return board, target
+
+
+'''
+def makeMove(move):
+
+    url = "https://www.notexponential.com/aip2pgaming/api/index.php"
+
+    payload = {'type': 'move',
+               'gameId': gameId,
+               'teamId': teamId,
+               'move': move}
+
+    response = requests.request(
+        "POST", url, headers=headers, data=payload)
+
+    moveDetails = json.loads(response.text)
+    return moveDetails
+'''
+
+
+def makeMove(move, gameId):
+    url = POST_API_URL
+
+    print("Game id passed in:", gameId, type(gameId))
+
+    payload = {'type': 'move',
+               'gameId': gameId,
+               'teamId': teamId,
+               'move': move}
+
+    response = requests.request(
+        "POST", url, headers=headers, data=payload)
+
+    moveDetails = json.loads(response.text)
+    print(moveDetails)
+    return moveDetails
 
 
 # API.get_board_string(3724)
-#API.makeMove('1, 3')
+# API.makeMove('1, 3')
 # API.getBoardString(3724)
-API.getBoardString(gameId)
+# getBoardString(gameId)
+# print(getMoves('4134', 4))
+
+# makeMove('2,3', '4134')
+
+

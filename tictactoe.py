@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Board:
-    def __init__(self, size=10, target=10, user=0):
+    def __init__(self, size=10, target=5, user=0):
         self.size = size
         self.totalMoves = size**2
         self.target = target
@@ -15,6 +15,9 @@ class Board:
 
     def getSize(self):
         return self.size
+
+    def getTarget(self):
+        return self.target
 
     def getUser(self):
         return self.user
@@ -78,6 +81,7 @@ class Board:
 
     def setUser(self, user):
         self.user = user
+        self.other = 0 if user == 1 else 1
 
     def switchUser(self, user):
         if user != self.user:
@@ -185,10 +189,15 @@ class Board:
 #board.setBoard("OO--\nO--X\nO-XX\nXX-X\n", 3)
 # board.printBoard()
 
-#a = board.getBoard()
-#array = np.array([a[i][1] for i in range(len(a))])
+##a = board.getBoard()
+##array = np.array([a[i][1] for i in range(len(a))])
 # print(array)
 
-#winner = -1
-#depth = 3
-#print(1000 * winner - depth if winner == 1 else 1000 * winner + depth)
+##winner = -1
+##depth = 3
+##print(1000 * winner - depth if winner == 1 else 1000 * winner + depth)
+
+#a = board.getBoard()
+# board.printBoard()
+
+
