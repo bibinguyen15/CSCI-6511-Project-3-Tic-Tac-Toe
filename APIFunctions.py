@@ -37,9 +37,9 @@ def loadGame(gameId, teamId2, opponentFirst=False):
 
     # if we did not create the game
     if not newGame and opponentFirst:
+        print("Wait for first move...")
         while getMoves(gameId) == 'FAIL':
             time.sleep(2)
-            print("Waiting for first move...")
 
         time.sleep(1)
         lastMove = getMoves(gameId)
@@ -68,9 +68,14 @@ def loadGame(gameId, teamId2, opponentFirst=False):
         board.drawBoard()
 
         lastMove = getMoves(gameId)
+        print("Waiting for move...")
         while lastMove['teamId'] != teamId2:
             time.sleep(3)
-            print("Still waiting for move...")
+            if board.gameOver():
+                print("Game ended.")
+                flag = False
+                return
+
             lastMove = getMoves(gameId)
 
         x, y = lastMove['x'], lastMove['y']

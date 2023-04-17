@@ -69,6 +69,7 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=MAX):
         return 0
 
     elif depth == constants.maxDepth:
+        print("Max depth:", constants.maxDepth)
         return 1
         # return heuristic(board)
 

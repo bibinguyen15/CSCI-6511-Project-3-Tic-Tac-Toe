@@ -5,7 +5,7 @@ userId = '1133'
 
 teamId = '1379'
 
-boardSize = 10
+boardSize = 5
 target = 5
 
 xapikey = '2853f0b95c015dc248ed'

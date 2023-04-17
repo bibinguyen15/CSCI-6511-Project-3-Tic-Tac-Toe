@@ -12,8 +12,8 @@ user = 0
 def main():
     # localPlay()
 
-    teamId2 = '1349'
-    gameId = '4139'
+    teamId2 = '1376'
+    gameId = 0
     loadGame(gameId, teamId2)
 
 
