@@ -1,6 +1,6 @@
 import time
 from API import *
-from constants import userId, boardSize, target
+
 from minimax import nextMove
 from tictactoe import Board
 
@@ -32,10 +32,8 @@ def loadGame(gameId, teamId2, opponentFirst=False):
     boardStr, target = getBoardString(gameId)
     # Just putting stock values for size and target because it will be override by setBoard anyways
     board = Board(3, 3, user)
-    board.setBoard(boardStr)
+    board.setBoard(boardStr, target)
     board.drawBoard()
-
-    board.print()
 
     # if we did not create the game
     if not newGame and opponentFirst:
@@ -57,7 +55,7 @@ def loadGame(gameId, teamId2, opponentFirst=False):
         bestMove = setMove(gameId, board)
 
         moveStatus = makeMove(moveToStr(bestMove), gameId)
-
+        board.print()
         while moveStatus['code'] == 'FAIL':
             time.sleep(2)
             if 'Game is no longer open' in moveStatus['message']:
@@ -70,7 +68,7 @@ def loadGame(gameId, teamId2, opponentFirst=False):
                 while lastMove['teamId'] != teamId2:
                     time.sleep(3)
                     lastMove = getMoves(gameId)
-
+            board.print()
             moveStatus = makeMove(moveToStr(bestMove), gameId)
 
         board.add(bestMove, user)
@@ -81,7 +79,7 @@ def loadGame(gameId, teamId2, opponentFirst=False):
 
         if board.gameOver() or board.isFull():
             print("Game ended.\nWinner:", board.getWinner())
-            # return
+            return
 
         lastMove = getMoves(gameId)
         print("Waiting for move...")
@@ -116,6 +114,7 @@ def setMove(gameId, board):
         constants.maxDepth = 10
 
     bestMove = nextMove(board, board.getUser())
+    board.print()
     print("Best move is:", bestMove)
 
     return bestMove
