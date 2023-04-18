@@ -66,15 +66,18 @@ def loadGame(gameId, teamId2, opponentFirst=False):
         board.add(bestMove, user)
         print("Player move:")
         board.drawBoard()
+        if board.gameOver() or board.isFull():
+            print("Game ended.")
+            return
 
         lastMove = getMoves(gameId)
         print("Waiting for move...")
         while lastMove['teamId'] != teamId2:
             time.sleep(3)
-            if board.gameOver():
-                print("Game ended.")
-                flag = False
-                return
+            # if board.gameOver():
+            #print("Game ended.")
+            #flag = False
+            # return
 
             lastMove = getMoves(gameId)
 
