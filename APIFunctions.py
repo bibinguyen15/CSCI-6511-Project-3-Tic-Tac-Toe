@@ -35,7 +35,7 @@ def loadGame(gameId, teamId2, opponentFirst=False):
     board.setBoard(boardStr)
     board.drawBoard()
 
-    # if we did not create the game        
+    # if we did not create the game
     if not newGame and opponentFirst:
         print("Wait for first move...")
         while getMoves(gameId) == 'FAIL':
@@ -47,7 +47,6 @@ def loadGame(gameId, teamId2, opponentFirst=False):
 
         board.add([x, y], opponent)
         board.drawBoard()
-               
 
     while flag:
         time.sleep(1)
@@ -66,17 +65,17 @@ def loadGame(gameId, teamId2, opponentFirst=False):
                 print("Waiting for move...")
                 while lastMove['teamId'] != teamId2:
                     time.sleep(3)
-                    lastMove = getMoves(gameId)                
+                    lastMove = getMoves(gameId)
 
             moveStatus = makeMove(moveToStr(bestMove), gameId)
 
         board.add(bestMove, user)
         print("Player move:")
         board.drawBoard()
-        
+
         if board.gameOver() or board.isFull():
             print("Game ended.\nWinner:", board.getWinner())
-            #return
+            # return
 
         lastMove = getMoves(gameId)
         print("Waiting for move...")
@@ -98,10 +97,12 @@ def setMove(gameId, board):
 
     if available > 30:
         constants.maxDepth = 2
-    elif available > 20:
+    elif available > 25:
         constants.maxDepth = 3
-    elif available > 10:
+    elif available > 20:
         constants.maxDepth = 4
+    elif available > 10:
+        constants.maxDepth = 5
     else:
         constants.maxDepth = 10
 

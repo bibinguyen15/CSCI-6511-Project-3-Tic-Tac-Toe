@@ -5,40 +5,42 @@ from APIFunctions import *
 from constants import teamId2
 
 
-boardSize = 5
-target = 4
-user = 1
+boardSize = 3
+target = 3
+user = 0
 
 
 def main():
 
-    # localPlay()
+    localPlay()
 
-    game = Board(boardSize, target, user)
-    print(user, game.getUser())
+    #game = Board(boardSize, target, user)
+    #print(user, game.getUser())
 
-    game.setBoard("XXX--\n-----\nOOO--\n-----\n-----\n", 4)
+    #game.setBoard("XXX--\n-----\nOOO--\n-----\n-----\n", 4)
 
-    game.drawBoard()
-    game.add([2, 3], 0)
-    game.printBoard()
-    print(game.gameOver(), game.getWinner())
+    # game.drawBoard()
+    #game.add([2, 3], 0)
+    # game.printBoard()
+    #print(game.gameOver(), game.getWinner())
     #gameId = 4155
     #loadGame(gameId, teamId2)
     #loadGame(gameId, teamId2, True)
 
 
 def localPlay():
+
     game = Board(boardSize, target, user)
 
     print("Starting game.\nboardSize=", boardSize,
           "| target=", target)
 
     game.drawBoard()
+    turn = user
 
     while(True):
         #player = int(input("Player's turn: "))
-        player = user % 2
+        player = turn % 2
 
         print("Player's turn:", player)
 
@@ -68,7 +70,7 @@ def localPlay():
 
         print("__________________________________________________________________")
 
-        user += 1
+        turn += 1
 
         if game.isFull():
             print("It's a draw.")

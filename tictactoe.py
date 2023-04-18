@@ -131,7 +131,7 @@ class Board:
 
         x, y = move
         count = 0
-        print(move, turn)
+
         # Check row
         for j in range(self.size):
             if self.board[x][j] == turn:
@@ -201,9 +201,10 @@ print(user, game.getUser())
 
 #game.setBoard("XXX--\n-----\nOOO--\n-----\n-----\n", 4)
 #game.setBoard("XXO--\nXOO--\nX-O--\n-----\n-----\n", 4)
-game.setBoard("X----\n-X--O\n--XO-\n--O--\n-----\n", 4)
+game.setBoard(
+    "OXXXX-O\nO------\n-------\n-------\n-------\n-------\nO-----O\n", 5)
 
 game.drawBoard()
-game.add([3, 3], 1)
+game.add([0, 5], 1)
 game.printBoard()
 print(game.gameOver(), game.getWinner())
