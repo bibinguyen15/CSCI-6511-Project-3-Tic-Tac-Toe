@@ -10,7 +10,7 @@ headers = {
     'Accept': '*/*',
     'Accept-Encoding': 'gzip, deflate, br',
     'Connection': 'close',
-    'x-api-key': '2853f0b95c015dc248ed',
+    'x-api-key': xapikey,
     'userId': constants.userId,
 }
 
@@ -30,10 +30,11 @@ def getMoves(gameId, count=1):
         "GET", url, params=params, headers=headers)
 
     jsonData = json.loads(response.text)
-    moveDetails = jsonData["moves"][0]
 
     if jsonData['code'] == 'FAIL':
         return 'FAIL'
+    else:
+        moveDetails = jsonData["moves"][0]
 
     return {'teamId': moveDetails['teamId'],
             'x': int(moveDetails['moveX']), 'y': int(moveDetails['moveY'])}

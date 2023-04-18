@@ -2,27 +2,46 @@ from tictactoe import Board
 import time
 from minimax import *
 from APIFunctions import *
+from constants import teamId2
 
 
-boardSize = 6
+boardSize = 5
 target = 4
-user = 0
+user = 1
 
 
 def main():
+
     # localPlay()
 
-    teamId2 = '1376'
-    gameId = 0
-    loadGame(gameId, teamId2)
+    game = Board(boardSize, target, user)
+    print(user, game.getUser())
+
+    game.setBoard("XXX--\n-----\nOOO--\n-----\n-----\n", 4)
+
+    game.drawBoard()
+    game.add([2, 3], 0)
+    game.printBoard()
+    print(game.gameOver(), game.getWinner())
+    #gameId = 4155
+    #loadGame(gameId, teamId2)
+    #loadGame(gameId, teamId2, True)
 
 
 def localPlay():
     game = Board(boardSize, target, user)
+
+    print("Starting game.\nboardSize=", boardSize,
+          "| target=", target)
+
     game.drawBoard()
 
     while(True):
-        player = int(input("Player's turn: "))
+        #player = int(input("Player's turn: "))
+        player = user % 2
+
+        print("Player's turn:", player)
+
         if game.getUser() != player:
             game.switchUser(player)
 
@@ -37,9 +56,7 @@ def localPlay():
             print("The best calculated move is:", best)
             print("Time taken", end - start, "s")
 
-            add = int(input("Want to make this move (1 for yes, 0 for no)? "))
-
-            if add == 1:
+            if not input("Want to make this move (leave empty for yes)? "):
                 game.add(best, player)
 
             else:
@@ -50,6 +67,8 @@ def localPlay():
         game.drawBoard()
 
         print("__________________________________________________________________")
+
+        user += 1
 
         if game.isFull():
             print("It's a draw.")

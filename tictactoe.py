@@ -11,7 +11,7 @@ class Board:
         self.user = user
         self.other = 0 if user == 1 else 1
         self.win = False
-        self.winner = 0
+        self.winner = -1
 
     def getSize(self):
         return self.size
@@ -29,6 +29,7 @@ class Board:
         return self.players[player]
 
     def continueGame(self):
+        self.winner = -1
         self.win = False
 
     def gameOver(self):
@@ -74,7 +75,8 @@ class Board:
             turn = -1
 
         self.win = self.checkWin(move, turn)
-        self.winner = turn
+        if self.win:
+            self.winner = turn
 
     def remove(self, move):
         self.board[move[0]][move[1]] = 0
@@ -96,10 +98,12 @@ class Board:
                 elif self.board[move[0]][move[1]] == -1:
                     self.board[move[0]][move[1]] = 1
 
-    def setBoard(self, boardStr, target=-1, user=0):
+    def setBoard(self, boardStr, target=-1, user=-1):
         boardStr = boardStr.split('\n')[:-1]
 
-        self.user = user
+        if user != -1:
+            self.user = user
+
         player = self.players[self.user]
         other = self.players[self.user - 1]
 
@@ -127,27 +131,25 @@ class Board:
 
         x, y = move
         count = 0
-
+        print(move, turn)
         # Check row
         for j in range(self.size):
             if self.board[x][j] == turn:
                 count += 1
+                if count == self.target:
+                    return True
             else:
                 count = 0
-
-        if count == self.target:
-            return True
 
         # Check column
         count = 0
         for i in range(self.size):
             if self.board[i][y] == turn:
                 count += 1
+                if count == self.target:
+                    return True
             else:
                 count = 0
-
-        if count == self.target:
-            return True
 
         # Check diagonal
         # Top left diagonal
@@ -158,10 +160,10 @@ class Board:
             for i in range(len(left)):
                 if left[i] == turn:
                     count += 1
+                    if count == self.target:
+                        return True
                 else:
                     count = 0
-        if count == self.target:
-            return True
 
         # Top right diagonal
         count = 0
@@ -174,30 +176,34 @@ class Board:
             for i in range(len(right)):
                 if right[i] == turn:
                     count += 1
+                    if count == self.target:
+                        return True
                 else:
                     count = 0
-        if count == self.target:
-            return True
 
         return False
 
+    def print(self):
+        print("Board status:\n", self.board)
+        print("User is:", self.user)
+        print("Other player is:", self.other)
+        print("Win?", self.win, "- Winner?", self.winner)
 
 #board = Board()
-# board.switchUser(1)
-# print(board.getOther())
-
-#board.setBoard("OO--\nO--X\nO-XX\nXX-X\n", 3)
-# board.printBoard()
-
-##a = board.getBoard()
-##array = np.array([a[i][1] for i in range(len(a))])
-# print(array)
-
-##winner = -1
-##depth = 3
-##print(1000 * winner - depth if winner == 1 else 1000 * winner + depth)
-
-#a = board.getBoard()
-# board.printBoard()
 
 
+boardSize = 5
+target = 4
+user = 0
+
+game = Board(boardSize, target, user)
+print(user, game.getUser())
+
+#game.setBoard("XXX--\n-----\nOOO--\n-----\n-----\n", 4)
+#game.setBoard("XXO--\nXOO--\nX-O--\n-----\n-----\n", 4)
+game.setBoard("X----\n-X--O\n--XO-\n--O--\n-----\n", 4)
+
+game.drawBoard()
+game.add([3, 3], 1)
+game.printBoard()
+print(game.gameOver(), game.getWinner())

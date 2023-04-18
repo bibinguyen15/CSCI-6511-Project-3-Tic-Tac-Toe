@@ -5,14 +5,14 @@ userId = '1133'
 
 teamId = '1379'
 
-boardSize = 5
+boardSize = 10
 target = 5
 
 xapikey = '2853f0b95c015dc248ed'
 
 teamId2 = '1376'
 
-maxDepth = 7
+maxDepth = 6
 
 POST_API_URL = "https://www.notexponential.com/aip2pgaming/api/index.php"
 GET_BOARD_STRING = "https://www.notexponential.com/aip2pgaming/api/index.php?type=boardString&gameId="
