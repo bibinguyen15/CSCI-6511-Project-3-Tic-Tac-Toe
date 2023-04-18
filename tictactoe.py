@@ -67,6 +67,7 @@ class Board:
             print()
 
     def add(self, move, player):
+        print("Adding", self.players[player], "at", move)
         if player == self.user:
             self.board[move[0]][move[1]] = 1
             turn = 1
@@ -77,6 +78,8 @@ class Board:
         self.win = self.checkWin(move, turn)
         if self.win:
             self.winner = turn
+
+        print("Still in add: win?", self.win, "Winner?", self.winner)
 
     def remove(self, move):
         self.board[move[0]][move[1]] = 0
@@ -133,20 +136,24 @@ class Board:
         count = 0
 
         # Check row
+        print("Checking row")
         for j in range(self.size):
             if self.board[x][j] == turn:
                 count += 1
                 if count == self.target:
+                    print(count)
                     return True
             else:
                 count = 0
 
         # Check column
+        print("Checking column")
         count = 0
         for i in range(self.size):
             if self.board[i][y] == turn:
                 count += 1
                 if count == self.target:
+                    print(count)
                     return True
             else:
                 count = 0
@@ -155,12 +162,13 @@ class Board:
         # Top left diagonal
         count = 0
         left = np.diagonal(self.board, y - x)
-
+        print("Check left diagonal")
         if len(left) >= self.target:
             for i in range(len(left)):
                 if left[i] == turn:
                     count += 1
                     if count == self.target:
+                        print(count)
                         return True
                 else:
                     count = 0
@@ -171,12 +179,13 @@ class Board:
         flip = np.fliplr(self.board)
 
         right = np.fliplr(self.board).diagonal(self.size - 1 - y - x)
-
+        print("Check right diagonal")
         if len(right) >= self.target:
             for i in range(len(right)):
                 if right[i] == turn:
                     count += 1
                     if count == self.target:
+                        print(count)
                         return True
                 else:
                     count = 0
@@ -188,10 +197,12 @@ class Board:
         print("Board status:\n", self.board)
         print("User is:", self.user)
         print("Other player is:", self.other)
+        print("Target:", self.target)
         print("Win?", self.win, "- Winner?", self.winner)
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
+'''
 #board = Board()
 
 
@@ -211,3 +222,4 @@ game.drawBoard()
 game.add([0, 5], 1)
 game.printBoard()
 print(game.gameOver(), game.getWinner())
+'''
