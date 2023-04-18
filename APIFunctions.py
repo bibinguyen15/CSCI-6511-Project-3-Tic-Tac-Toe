@@ -35,7 +35,7 @@ def loadGame(gameId, teamId2, opponentFirst=False):
     board.setBoard(boardStr)
     board.drawBoard()
 
-    # if we did not create the game
+    # if we did not create the game        
     if not newGame and opponentFirst:
         print("Wait for first move...")
         while getMoves(gameId) == 'FAIL':
@@ -47,6 +47,7 @@ def loadGame(gameId, teamId2, opponentFirst=False):
 
         board.add([x, y], opponent)
         board.drawBoard()
+               
 
     while flag:
         time.sleep(1)
@@ -60,25 +61,27 @@ def loadGame(gameId, teamId2, opponentFirst=False):
                 print("Game ended.")
                 flag = False
                 return
+            elif 'It is not the turn of team' in moveStatus['message']:
+                lastMove = getMoves(gameId)
+                print("Waiting for move...")
+                while lastMove['teamId'] != teamId2:
+                    time.sleep(3)
+                    lastMove = getMoves(gameId)                
 
             moveStatus = makeMove(moveToStr(bestMove), gameId)
 
         board.add(bestMove, user)
         print("Player move:")
         board.drawBoard()
+        
         if board.gameOver() or board.isFull():
-            print("Game ended.")
-            return
+            print("Game ended.\nWinner:", board.getWinner())
+            #return
 
         lastMove = getMoves(gameId)
         print("Waiting for move...")
         while lastMove['teamId'] != teamId2:
             time.sleep(3)
-            # if board.gameOver():
-            #print("Game ended.")
-            #flag = False
-            # return
-
             lastMove = getMoves(gameId)
 
         x, y = lastMove['x'], lastMove['y']
