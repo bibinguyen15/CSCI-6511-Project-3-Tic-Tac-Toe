@@ -87,7 +87,7 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=MAX):
             # Call minimax recursively and choose the maximum value
             score = minimax(board,
                             depth + 1, False, alpha, beta)
-            print("Score for", cell, board.getUser(), "=", score)
+            #print("Score for", cell, board.getUser(), "=", score)
 
             best = max(best, score)
 
@@ -115,7 +115,7 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=MAX):
             score = minimax(board,
                             depth + 1, True, alpha, beta)
 
-            print("Score for", cell, board.getOther(), "=", score)
+            #print("Score for", cell, board.getOther(), "=", score)
 
             best = min(best, score)
             beta = min(beta, best)

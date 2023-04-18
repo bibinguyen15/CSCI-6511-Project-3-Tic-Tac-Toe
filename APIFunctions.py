@@ -35,6 +35,8 @@ def loadGame(gameId, teamId2, opponentFirst=False):
     board.setBoard(boardStr)
     board.drawBoard()
 
+    board.print()
+
     # if we did not create the game
     if not newGame and opponentFirst:
         print("Wait for first move...")
@@ -49,6 +51,8 @@ def loadGame(gameId, teamId2, opponentFirst=False):
         board.drawBoard()
 
     while flag:
+        board.print()
+
         time.sleep(1)
         bestMove = setMove(gameId, board)
 
@@ -73,6 +77,8 @@ def loadGame(gameId, teamId2, opponentFirst=False):
         print("Player move:")
         board.drawBoard()
 
+        board.print()
+
         if board.gameOver() or board.isFull():
             print("Game ended.\nWinner:", board.getWinner())
             # return
@@ -86,7 +92,10 @@ def loadGame(gameId, teamId2, opponentFirst=False):
         x, y = lastMove['x'], lastMove['y']
         board.add([x, y], opponent)
 
+        board.print()
+
         print("Opponent move:")
+
         board.drawBoard()
 
 

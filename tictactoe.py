@@ -184,10 +184,13 @@ class Board:
         return False
 
     def print(self):
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print("Board status:\n", self.board)
         print("User is:", self.user)
         print("Other player is:", self.other)
         print("Win?", self.win, "- Winner?", self.winner)
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
 
 #board = Board()
 

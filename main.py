@@ -12,20 +12,12 @@ user = 0
 
 def main():
 
-    localPlay()
+    # localPlay()
+    teamId2 = '1349'
+    gameId = 0
+    opponentStarts = False
 
-    #game = Board(boardSize, target, user)
-    #print(user, game.getUser())
-
-    #game.setBoard("XXX--\n-----\nOOO--\n-----\n-----\n", 4)
-
-    # game.drawBoard()
-    #game.add([2, 3], 0)
-    # game.printBoard()
-    #print(game.gameOver(), game.getWinner())
-    #gameId = 4155
-    #loadGame(gameId, teamId2)
-    #loadGame(gameId, teamId2, True)
+    loadGame(gameId, teamId2, opponentStarts)
 
 
 def localPlay():
