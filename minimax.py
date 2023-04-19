@@ -4,75 +4,23 @@ from constants import *
 import numpy as np
 
 
-def heuristic(board):
-    score = 0
-    target = board.getTarget()
-
-    currentBoard = board.getBoard()
-    size = board.getSize()
-
-    # evaluate row
-    for row in currentBoard:
-        score += perLine(row, target)
-
-    # evaluate column
-    for j in range(size):
-        score += perLine(currentBoard[:, j], target)
-
-    for i in range(1 - size, size):
-        score += perLine(np.diagonal(currentBoard, i), target)
-        score += perLine(np.fliplr(currentBoard).diagonal(i), target)
-
-    # evaluate diagonal
-    return score
-
-
-def perLine(line, target):
-    if len(line) >= target:
-        print("Line being evaluated:", line)
-        score, count, last, neutral = 0, 0, 0, 0
-        interrupted = False
-
-        for x in line:
-            if x == 0:
-                neutral += 1
-                if count != 0:
-                    interrupted = True
-            elif x == last:
-                count += 1
-                if count == target and not interrupted:
-                    return 1000 * x
-            elif x != last and last != 0:
-                if neutral + count >= target:
-                    score += (count * 2 + neutral) * last
-                count = 1
-                last = x
-                neutral = 0
-
-            else:
-                last = x
-                count = 1
-
-        return score
-    return 0
-
-
 def minimax(board, depth, isMax, alpha=constants.MIN, beta=MAX):
     # board.print()
 
     if board.gameOver():
-
         winner = board.getWinner()
-        board.continueGame()
         return (1000 * winner - depth if winner == 1 else 1000 * winner + depth)
 
     elif board.isFull():
         return 0
 
     elif depth == constants.maxDepth:
-
-        return 1
-        # return heuristic(board)
+        score = heuristic(board)
+        print(board.board, score)
+        if isMax:
+            return score - depth
+        else:
+            return score + depth
 
     # if not, is it the maximizing player's turn?
     if isMax:
@@ -87,7 +35,7 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=MAX):
             # Call minimax recursively and choose the maximum value
             score = minimax(board,
                             depth + 1, False, alpha, beta)
-            #print("Score for", cell, board.getUser(), "=", score)
+            print("Score for", cell, board.getUser(), "=", score)
 
             best = max(best, score)
 
@@ -115,7 +63,7 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=MAX):
             score = minimax(board,
                             depth + 1, True, alpha, beta)
 
-            #print("Score for", cell, board.getOther(), "=", score)
+            # print("Score for", cell, board.getOther(), "=", score)
 
             best = min(best, score)
             beta = min(beta, best)
@@ -159,3 +107,99 @@ def nextMove(board, player):
     return bestMove
 
 
+def heuristic(board):
+    score = 0
+    target = board.getTarget()
+
+    currentBoard = board.getBoard()
+    size = board.getSize()
+
+    # evaluate row
+    for i in range(size):
+        for j in range(size):
+            score += eachPoint(board, [i, j], target, size)
+
+    return score
+
+
+def eachPoint(board, point, target, size):
+    x, y = point
+    score = 0
+
+    # print("____Calculating heuristics____\nPoint: ", point
+    # )
+
+    row = board.board[x, y:y + target if y + target < size else size]
+    if len(row) == target and not (1 in row and -1 in row):
+        points = perLine(row, target)
+        if abs(points) >= 200:
+            return points
+        score += points
+
+    col = board.board[x:x + target if x + target < size else size, y]
+    if len(col) == target and not (1 in col and -1 in col):
+        points = perLine(col, target)
+        if abs(points) >= 200:
+            return points
+        score += points
+
+    k = min(x, y)
+    left = np.diagonal(
+        board.board, y - x)[k:k + target if k + target < size else size]
+
+    if len(left) == target and not (1 in left and -1 in left):
+        points = perLine(left, target)
+        if abs(points) >= 200:
+
+            return points
+        score += points
+
+    k = min(x, size - 1 - y)
+    right = np.fliplr(board.board).diagonal(
+        size - 1 - y - x)[k:k + target if k + target < size else size]
+
+    if len(right) == target and not (1 in right and -1 in right):
+        points = perLine(right, target)
+        if abs(points) >= 200:
+
+            return points
+        score += points
+
+    return score
+
+
+def perLine(line, target):
+    if 1 in line:
+        turn = 1
+    else:
+        turn = -1
+
+    #print("Turn:", turn)
+
+    nonZeros = np.count_nonzero(line)
+
+    if nonZeros == target:
+        return 1000 * turn
+
+    if nonZeros == target - 1:
+        return 500 * turn
+    if nonZeros == target - 2:
+        return 200 * turn
+
+    return (nonZeros * 5 + target - nonZeros) * turn
+
+
+'''
+game = Board()
+# game.setBoard(
+# "XXX----\n-------\nOOO----\n-------\n-------\nXOX--OX\nXXOOX--\n", 4)
+
+game.setBoard("X-XO\nX-OX\nOO-X\nOOXX\n", 4)
+game.print()
+
+game.printBoard()
+
+print(heuristic(game))
+
+game.printBoard()
+'''
