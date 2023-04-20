@@ -5,8 +5,8 @@ from APIFunctions import *
 from constants import teamId2
 
 
-boardSize = 4
-target = 3
+boardSize = 5
+target = 5
 user = 0
 
 

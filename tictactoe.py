@@ -86,6 +86,7 @@ class Board:
         self.board[move[0]][move[1]] = 0
         if self.win:
             self.win = False
+            self.winner = -1
 
     def setUser(self, user):
         self.user = user
@@ -194,14 +195,14 @@ class Board:
         return False
 
     def print(self):
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-        self.drawBoard()
+        print("----------------------------------------")
         print("Board status:\n", self.board)
         print("User is:", self.user)
         print("Other player is:", self.other)
         print("Target:", self.target)
         print("Win?", self.win, "- Winner?", self.winner)
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        self.drawBoard()
+        print("----------------------------------------")
 
 
 '''
