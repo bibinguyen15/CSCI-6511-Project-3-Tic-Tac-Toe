@@ -11,15 +11,9 @@ class Board:
         self.user = user
         self.other = 0 if user == 1 else 1
         self.win = False
+        self.winner = 0
 
-
-<< << << < HEAD
-   self.winner = False
-== == == =
-   self.winner = 0
->>>>>> >
-
-   def getSize(self):
+    def getSize(self):
         return self.size
 
     def getTarget(self):

@@ -158,7 +158,6 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
         if isMax:
             return score + depth
         else:
-
             return score - depth
 
     # if not, is it the maximizing player's turn?
@@ -166,8 +165,8 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
         best = MIN
 
         score = []
-        for move in self.available():
-            score.append((move, moveHeu(move, board, turn)))
+        for move in board.available():
+            score.append((move, moveHeu(move, board, 1)))
         score.sort(key=lambda a: a[1], reverse=True)
         print(score)
         available = [move for (move, i) in score]
@@ -204,8 +203,8 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
 
         #available = sortMoves(board.available(), board, -1)
         score = []
-        for move in self.available():
-            score.append((move, moveHeu(move, board, turn)))
+        for move in board.available():
+            score.append((move, moveHeu(move, board, -1)))
         score.sort(key=lambda a: a[1], reverse=False)
         print(score)
         available = [move for (move, i) in score]
