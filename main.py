@@ -80,7 +80,7 @@ def localPlayPerson(size, target, playerStart=False):
 
         if board.gameOver() or board.isFull():
             print("Game ended.")
-            if board.getWinner() != -1:
+            if board.getWinner():
                 print("Winner:", board.getWinner())
 
             return

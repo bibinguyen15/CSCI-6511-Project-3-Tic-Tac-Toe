@@ -11,7 +11,7 @@ class Board:
         self.user = user
         self.other = 0 if user == 1 else 1
         self.win = False
-        self.winner = -1
+        self.winner = False
 
     def getSize(self):
         return self.size
@@ -29,14 +29,14 @@ class Board:
         return self.players[player]
 
     def continueGame(self):
-        self.winner = -1
+        self.winner = False
         self.win = False
 
     def gameOver(self):
         return self.win
 
     def getWinner(self):
-        return self.winner
+        return self.players[self.winner]
 
     def available(self):
         return np.argwhere(self.board == 0)
@@ -67,7 +67,9 @@ class Board:
             print()
 
     def add(self, move, player):
-
+        if self.win:
+            print("Not able to add any more. Game over.")
+            return
         #print("Adding", self.players[player], "at", move)
         if player == self.user:
             self.board[move[0]][move[1]] = 1
@@ -205,8 +207,7 @@ class Board:
         print("----------------------------------------")
 
 
-'''
-#board = Board()
+board = Board()
 
 
 boardSize = 5
@@ -222,7 +223,12 @@ game.setBoard(
     "OXXXX-O\nO------\n-------\n-------\n-------\n-------\nO-----O\n", 5)
 
 game.drawBoard()
-game.add([0, 5], 1)
+
+for x in game.available():
+    game.add(x, 1)
+    game.drawBoard()
+    if game.gameOver():
+        break
 game.printBoard()
 print(game.gameOver(), game.getWinner())
-'''
+
