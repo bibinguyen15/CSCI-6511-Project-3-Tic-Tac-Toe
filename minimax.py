@@ -165,7 +165,13 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
     if isMax:
         best = MIN
 
-        available = sortMoves(board.available(), board, 1)
+        score = []
+        for move in self.available():
+            score.append((move, moveHeu(move, board, turn)))
+        score.sort(key=lambda a: a[1], reverse=True)
+        print(score)
+        available = [move for (move, i) in score]
+        #available = sortMoves(board.available(), board, 1)
 
         for cell in available:
             # make the move
@@ -196,7 +202,13 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
     else:
         best = MAX
 
-        available = sortMoves(board.available(), board, -1)
+        #available = sortMoves(board.available(), board, -1)
+        score = []
+        for move in self.available():
+            score.append((move, moveHeu(move, board, turn)))
+        score.sort(key=lambda a: a[1], reverse=False)
+        print(score)
+        available = [move for (move, i) in score]
 
         for cell in available:
             # make the move
