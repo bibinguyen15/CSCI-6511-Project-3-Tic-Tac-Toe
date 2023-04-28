@@ -11,7 +11,7 @@ class Board:
         self.user = user
         self.other = 0 if user == 1 else 1
         self.win = False
-        self.winner = -1
+        self.winner = 0
 
     def getSize(self):
         return self.size
@@ -29,7 +29,7 @@ class Board:
         return self.players[player]
 
     def continueGame(self):
-        self.winner = -1
+        self.winner = 0
         self.win = False
 
     def gameOver(self):
@@ -86,7 +86,7 @@ class Board:
         self.board[move[0]][move[1]] = 0
         if self.win:
             self.win = False
-            self.winner = -1
+            self.winner = 0
 
     def setUser(self, user):
         self.user = user
