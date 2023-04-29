@@ -35,7 +35,8 @@ def localPlayPerson(size, target, playerStart=False):
 
     board.drawBoard()
 
-    # board.print()
+    #board.setBoard("XX--O\nOX-X-\n--O--\n--O--\n-----\n", 5)
+    #board.drawBoard()
 
     # if player start first
     if playerStart:

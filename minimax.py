@@ -5,21 +5,13 @@ import numpy as np
 import math
 
 
-def sortMoves(available, board, turn):
-    score = []
-    for move in available:
-        score.append((move, moveHeu(move, board, turn)))
-    score.sort(key=lambda a: abs(a[1]), reverse=True)
-    print(score)
-    return [move for (move, i) in score]
-
-
 def moveHeu(move, board, turn):
     score = 0
 
     board.add(move, board.user if turn == 1 else board.other)
 
     if board.gameOver():
+        board.remove(move)
         return 10000 * turn
 
     score += checkCol(move, board, turn) + checkRow(move, board, turn) + \
@@ -141,20 +133,24 @@ def checkCol(move, board, turn):
 
 
 def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
-    board.print()
+    #board.print()
 
     if board.gameOver():
         winner = board.getWinner()
-        return (10000 * winner - depth if winner == 1 else 10000 * winner + depth)
+        board.continueGame()
+        if winner == 1:
+            score = 10000 * winner - depth
+        else:
+            score = 10000 * winner + depth
+        return score
 
     elif board.isFull():
         return 0
 
     elif depth == constants.maxDepth:
-        # elif depth == 100:
-        print(depth)
         score = heuristic(board)
-        print(board.board, score)
+        #print(board.board, score)
+
         if isMax:
             return score + depth
         else:
@@ -168,21 +164,20 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
         for move in board.available():
             score.append((move, moveHeu(move, board, 1)))
         score.sort(key=lambda a: a[1], reverse=True)
-        print(score)
+        #print(score)
+
         available = [move for (move, i) in score]
-        #available = sortMoves(board.available(), board, 1)
 
         for cell in available:
             # make the move
             board.add(cell, board.getUser())
-
-            board.drawBoard()
+            #print("Adding move:", cell)
+            #board.drawBoard()
 
             # Call minimax recursively and choose the maximum value
             score = minimax(board,
                             depth + 1, False, alpha, beta)
 
-            board.drawBoard()
             #print("Score for", cell, "[", board.getUser(), "] =", score)
 
             best = max(best, score)
@@ -191,6 +186,8 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
 
             # undo move
             board.remove(cell)
+            #print("Removing move")
+            #board.drawBoard()
 
             if beta <= alpha:
                 break
@@ -201,25 +198,24 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
     else:
         best = MAX
 
-        #available = sortMoves(board.available(), board, -1)
         score = []
         for move in board.available():
             score.append((move, moveHeu(move, board, -1)))
         score.sort(key=lambda a: a[1], reverse=False)
-        print(score)
+        #print(score)
         available = [move for (move, i) in score]
 
         for cell in available:
             # make the move
             board.add(cell, board.getOther())
-
-            board.drawBoard()
+            #print("Adding move:", cell)
+            #board.drawBoard()
 
             # Call minimax recursively and choose the maximum value
             score = minimax(board,
                             depth + 1, True, alpha, beta)
 
-            board.drawBoard()
+            #board.drawBoard()
             #print("Score for", cell, "[", board.getOther(), "] =", score)
 
             best = min(best, score)
@@ -227,7 +223,8 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
 
             # undo move
             board.remove(cell)
-
+            #print("Removing move")
+            #board.drawBoard()
             if beta <= alpha:
                 break
 
@@ -245,12 +242,21 @@ def nextMove(board, player):
 
         board.switchUser(player)
 
-        for cell in board.available():
-            print("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n",
-                  "Evaluating the move:", cell)
+        score = []
+        for move in board.available():
+            score.append((move, moveHeu(move, board, 1)))
+        score.sort(key=lambda a: a[1], reverse=True)
+
+        available = [move for (move, i) in score]
+
+        for cell in available:
+            #print("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n",
+            #"Evaluating the move:", cell)
 
             # Make the move
             board.add(cell, player)
+
+            #board.drawBoard()
 
             # Call minimax
             move = minimax(board, 0, False, MIN, MAX)
@@ -258,14 +264,17 @@ def nextMove(board, player):
             moveScore[(cell[0], cell[1])] = move
 
             # Undo move
+            #print("Removing move")
             board.remove(cell)
-            print("Move value:", move,
-                  "\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------------\n")
+            #board.drawBoard()
+
+            #print("Move value:", move,
+            #"\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------------\n")
 
             if move > bestVal:
                 bestMove, bestVal = cell, move
 
-        print("\nAll moves:", moveScore)
+        #print("\nAll moves:", moveScore)
 
         #print("Best move for us:", bestMove, "with value:", bestVal)
 
@@ -327,7 +336,7 @@ def eachPoint(board, point, target, size):
 
     if len(right) == target and not (1 in right and -1 in right):
         points = perLine(right, target)
-        print("Right:", right, "=", points)
+        #print("Right:", right, "=", points)
         if abs(points) == 10000:
             return points
         score += points

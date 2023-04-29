@@ -29,7 +29,7 @@ class Board:
         return self.players[player]
 
     def continueGame(self):
-        self.winner = False
+        #self.winner = False
         self.winner = 0
 
         self.win = False
@@ -38,7 +38,7 @@ class Board:
         return self.win
 
     def getWinner(self):
-        return self.players[self.winner]
+        return self.winner
 
     def available(self):
         return np.argwhere(self.board == 0)
@@ -71,6 +71,7 @@ class Board:
     def add(self, move, player):
         if self.win:
             print("Not able to add any more. Game over.")
+            print("winner is apparently,", self.winner)
             return
         #print("Adding", self.players[player], "at", move)
         if player == self.user:
@@ -89,6 +90,7 @@ class Board:
     def remove(self, move):
         self.board[move[0]][move[1]] = 0
         if self.win:
+            #print("Unwinning")
             self.win = False
             self.winner = 0
 
@@ -209,6 +211,7 @@ class Board:
         print("----------------------------------------")
 
 
+'''
 board = Board()
 
 
@@ -234,3 +237,4 @@ for x in game.available():
 game.printBoard()
 print(game.gameOver(), game.getWinner())
 
+'''
