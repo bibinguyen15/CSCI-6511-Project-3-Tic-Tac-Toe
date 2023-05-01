@@ -5,13 +5,14 @@ from APIFunctions import *
 from constants import teamId2
 
 
-boardSize = 5
+boardSize = 10
 target = 5
 user = 0
 
 
 def main():
-    localPlayPerson(boardSize, target, False)
+    personStarts = False
+    localPlayPerson(boardSize, target, personStarts)
 
     # localPlayAI()
     teamId2 = '1358'

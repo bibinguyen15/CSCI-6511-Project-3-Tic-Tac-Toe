@@ -3,6 +3,7 @@ import constants
 from constants import *
 import numpy as np
 import math
+from cache import Cache
 
 
 def moveHeu(move, board, turn):
@@ -46,6 +47,7 @@ def checkDiagonalRight(move, board, turn):
         jy += 1
     if jx - right1 + continuous >= board.getTarget() and left1 - ix + continuous >= board.getTarget():
         return 4 ** continuous
+
     elif jx - ix - 1 < board.getTarget():
         return 0
     else:
@@ -139,18 +141,23 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
         winner = board.getWinner()
         board.continueGame()
         if winner == 1:
-            score = 10000 * winner - depth
+            score = 100000 * winner - depth
         else:
-            score = 10000 * winner + depth
+            score = 100000 * winner + depth
         return score
 
     elif board.isFull():
         return 0
 
     elif depth == constants.maxDepth:
-        score = heuristic(board)
-        #print(board.board, score)
+        #inCache = cache.getScore(board.board)
+        #if not inCache:
+        #score = heuristic(board)
+        #cache.append(board.board, score)
+        #else:
+        #score = inCache
 
+        score = heuristic(board)
         if isMax:
             return score + depth
         else:
@@ -232,8 +239,9 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
 
 
 def nextMove(board, player):
-
     if board.isEmpty():
+        bestMove = [board.getSize() // 2, board.getSize() // 2]
+    elif board.board[board.size // 2][board.size // 2] == 0:
         bestMove = [board.getSize() // 2, board.getSize() // 2]
     else:
         bestVal = constants.MIN
@@ -306,7 +314,7 @@ def eachPoint(board, point, target, size):
     if len(row) == target and not (1 in row and -1 in row):
         points = perLine(row, target)
         #print("Row:", row, "=", points)
-        if abs(points) >= 10000:
+        if abs(points) >= 100000:
             return points
         score += points
 
@@ -314,7 +322,7 @@ def eachPoint(board, point, target, size):
     if len(col) == target and not (1 in col and -1 in col):
         points = perLine(col, target)
         #print("Col:", col, "=", points)
-        if abs(points) == 10000:
+        if abs(points) == 100000:
             return points
         score += points
 
@@ -326,7 +334,7 @@ def eachPoint(board, point, target, size):
 
         points = perLine(left, target)
         #print("Left diag:", left, "=", points)
-        if abs(points) == 10000:
+        if abs(points) == 100000:
             return points
         score += points
 
@@ -337,7 +345,7 @@ def eachPoint(board, point, target, size):
     if len(right) == target and not (1 in right and -1 in right):
         points = perLine(right, target)
         #print("Right:", right, "=", points)
-        if abs(points) == 10000:
+        if abs(points) == 100000:
             return points
         score += points
 
@@ -353,7 +361,7 @@ def perLine(line, target):
     nonZeros = np.count_nonzero(line)
 
     if nonZeros == target:
-        return 10000 * turn
+        return 100000 * turn
 
     if nonZeros == target - 1:
         return 500 * turn
@@ -362,18 +370,3 @@ def perLine(line, target):
 
     return (nonZeros * 5 + target - nonZeros) * turn
 
-
-'''
-game = Board()
-# game.setBoard(
-# "XXX----\n-------\nOOO----\n-------\n-------\nXOX--OX\nXXOOX--\n", 4)
-
-game.setBoard("X-XO\nX-OX\nOO-X\nOOXX\n", 4)
-game.print()
-
-game.printBoard()
-
-print(heuristic(game))
-
-game.printBoard()
-'''

@@ -24,14 +24,13 @@ def loadGame(gameId, teamId2, opponentFirst=False):
             print("Failed to create game!")
             return False
         else:
-
             newGame = True
     else:
         newGame = False
 
     boardStr, target = getBoardString(gameId)
     # Just putting stock values for size and target because it will be override by setBoard anyways
-    board = Board(3, 3, user)
+    board = Board(constants.boardSize, constants.target, user)
     board.setBoard(boardStr, target)
     board.drawBoard()
 
@@ -49,13 +48,13 @@ def loadGame(gameId, teamId2, opponentFirst=False):
         board.drawBoard()
 
     while flag:
-        board.print()
+        #board.print()
 
         time.sleep(1)
         bestMove = setMove(gameId, board)
 
         moveStatus = makeMove(moveToStr(bestMove), gameId)
-        board.print()
+        #board.print()
         while moveStatus['code'] == 'FAIL':
             time.sleep(2)
             if 'Game is no longer open' in moveStatus['message']:
@@ -68,18 +67,24 @@ def loadGame(gameId, teamId2, opponentFirst=False):
                 while lastMove['teamId'] != teamId2:
                     time.sleep(3)
                     lastMove = getMoves(gameId)
-            board.print()
+                x, y = lastMove['x'], lastMove['y']
+
+                board.add([x, y], opponent)
+                board.drawBoard()
+                bestMove = setMove(gameId, board)
+
+            #board.print()
             moveStatus = makeMove(moveToStr(bestMove), gameId)
 
         board.add(bestMove, user)
         print("Player move:")
         board.drawBoard()
 
-        board.print()
+        #board.print()
 
         if board.gameOver() or board.isFull():
             print("Game ended.\nWinner:", board.getWinner())
-            return
+            #return
 
         lastMove = getMoves(gameId)
         print("Waiting for move...")
@@ -90,7 +95,7 @@ def loadGame(gameId, teamId2, opponentFirst=False):
         x, y = lastMove['x'], lastMove['y']
         board.add([x, y], opponent)
 
-        board.print()
+        #board.print()
 
         print("Opponent move:")
 
@@ -100,7 +105,7 @@ def loadGame(gameId, teamId2, opponentFirst=False):
 def setMove(gameId, board):
     available = len(board.available())
 
-    print("Game ID is:", gameId)
+    #print("Game ID is:", gameId)
 
     if available > 30:
         constants.maxDepth = 2
@@ -114,8 +119,8 @@ def setMove(gameId, board):
         constants.maxDepth = 10
 
     bestMove = nextMove(board, board.getUser())
-    board.print()
-    print("Best move is:", bestMove)
+    #board.print()
+    #print("Best move is:", bestMove)
 
     return bestMove
 
