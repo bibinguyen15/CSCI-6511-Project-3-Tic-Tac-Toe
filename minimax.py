@@ -7,7 +7,6 @@ from cache import Cache
 
 
 def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
-    #board.print()
 
     if board.win:
         winner = board.winner
@@ -52,7 +51,7 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
             board.add(cell, board.user)
 
             # Call minimax recursively and choose the maximum value
-            score = minimax(board,
+            score = minimax(board, cache,
                             depth + 1, False, alpha, beta)
 
             best = max(best, score)
@@ -85,7 +84,7 @@ def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
             #board.drawBoard()
 
             # Call minimax recursively and choose the maximum value
-            score = minimax(board,
+            score = minimax(board, cache,
                             depth + 1, True, alpha, beta)
 
             best = min(best, score)

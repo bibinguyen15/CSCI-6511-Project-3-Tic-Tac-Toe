@@ -5,15 +5,19 @@ from APIFunctions import *
 from constants import teamId2
 
 
-boardSize = 8
+
+boardSize = 10
 target = 5
 user = 0
 
 
 def main():
     #localPlayAI()
+
     #personStarts = True
     #localPlayPerson(boardSize, target, personStarts)
+    personStarts = False
+    localPlayPerson(boardSize, target, personStarts)
 
     # localPlayAI()
     teamId2 = '1365'
@@ -36,6 +40,8 @@ def localPlayPerson(size, target, playerStart=False):
     board = Board(size, target, user)
 
     board.drawBoard()
+
+    cache = Cache()
     #board.setBoard("XX--O\nOX-X-\n--O--\n--O--\n-----\n", 5)
     #board.drawBoard()
 
@@ -52,7 +58,7 @@ def localPlayPerson(size, target, playerStart=False):
 
         start = time.time()
 
-        bestMove = setMove(board)
+        bestMove = setMove(board, cache)
 
         end = time.time()
 
@@ -90,12 +96,10 @@ def localPlayPerson(size, target, playerStart=False):
         # board.print()
 
 
-def setMove(board):
+def setMove(board, cache):
     available = len(board.available())
-    if available > board.totalMoves - board.target - 1 and available > 1000:
-        #if available > 80:
-        constants.maxDepth = 1
-    elif available > 30:
+
+    if available > 30:
         constants.maxDepth = 2
     elif available > 20:
         constants.maxDepth = 3
@@ -104,8 +108,9 @@ def setMove(board):
     else:
         constants.maxDepth = 10
 
+
     bestMove = nextMove(board, board.user)
-    # board.print()
+
     # print("Best move is:", bestMove)
 
     return bestMove
