@@ -5,20 +5,22 @@ from APIFunctions import *
 from constants import teamId2
 
 
-boardSize = 5
+boardSize = 8
 target = 5
 user = 0
 
 
 def main():
-    localPlayPerson(boardSize, target, False)
+    #localPlayAI()
+    #personStarts = True
+    #localPlayPerson(boardSize, target, personStarts)
 
     # localPlayAI()
-    teamId2 = '1358'
-    gameId = 0
-    opponentStarts = False
+    teamId2 = '1365'
+    gameId = 4392
+    opponentStarts = True
 
-    #loadGame(gameId, teamId2, opponentStarts)
+    loadGame(gameId, teamId2, opponentStarts)
 
 
 def localPlayPerson(size, target, playerStart=False):
@@ -34,8 +36,8 @@ def localPlayPerson(size, target, playerStart=False):
     board = Board(size, target, user)
 
     board.drawBoard()
-
-    # board.print()
+    #board.setBoard("XX--O\nOX-X-\n--O--\n--O--\n-----\n", 5)
+    #board.drawBoard()
 
     # if player start first
     if playerStart:
@@ -64,8 +66,8 @@ def localPlayPerson(size, target, playerStart=False):
 
         # board.print()
 
-        if board.gameOver() or board.isFull():
-            print("Game ended.\nWinner:", board.getWinner())
+        if board.win or board.isFull():
+            print("Game ended.\nWinner:", board.winner)
             return
 
         x, y = int(input("x=")), int(input("y="))
@@ -78,10 +80,10 @@ def localPlayPerson(size, target, playerStart=False):
 
         board.drawBoard()
 
-        if board.gameOver() or board.isFull():
+        if board.win or board.isFull():
             print("Game ended.")
-            if board.getWinner() != -1:
-                print("Winner:", board.getWinner())
+            if board.winner:
+                print("Winner:", board.winner)
 
             return
 
@@ -90,8 +92,10 @@ def localPlayPerson(size, target, playerStart=False):
 
 def setMove(board):
     available = len(board.available())
-
-    if available > 30:
+    if available > board.totalMoves - board.target - 1 and available > 1000:
+        #if available > 80:
+        constants.maxDepth = 1
+    elif available > 30:
         constants.maxDepth = 2
     elif available > 20:
         constants.maxDepth = 3
@@ -100,7 +104,7 @@ def setMove(board):
     else:
         constants.maxDepth = 10
 
-    bestMove = nextMove(board, board.getUser())
+    bestMove = nextMove(board, board.user)
     # board.print()
     # print("Best move is:", bestMove)
 
@@ -123,7 +127,7 @@ def localPlayAI():
 
         print("Player's turn:", player)
 
-        if game.getUser() != player:
+        if game.user != player:
             game.switchUser(player)
 
         if not (input("Do you want to make a move (leave empty if not)? ")):
@@ -154,9 +158,9 @@ def localPlayAI():
         if game.isFull():
             print("It's a draw.")
             break
-        elif game.gameOver():
+        elif game.win:
             print("Winner:", end=" ")
-            if game.getWinner() == 1:
+            if game.winner == 1:
                 print(game.getPlayer(player))
             else:
                 print(game.getPlayer(player - 1))
