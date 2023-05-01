@@ -83,7 +83,7 @@ def loadGame(gameId, teamId2, opponentFirst=False):
         #board.print()
 
         if board.gameOver() or board.isFull():
-            print("Game ended.\nWinner:", board.getWinner())
+            print("Game ended.\nWinner:", board.winner)
             #return
 
         lastMove = getMoves(gameId)
@@ -118,7 +118,7 @@ def setMove(gameId, board):
     else:
         constants.maxDepth = 10
 
-    bestMove = nextMove(board, board.getUser())
+    bestMove = nextMove(board, board.user)
     #board.print()
     #print("Best move is:", bestMove)
 

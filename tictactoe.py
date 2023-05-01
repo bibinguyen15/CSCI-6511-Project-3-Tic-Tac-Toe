@@ -19,12 +19,6 @@ class Board:
     def getTarget(self):
         return self.target
 
-    def getUser(self):
-        return self.user
-
-    def getOther(self):
-        return self.other
-
     def getPlayer(self, player):
         return self.players[player]
 
@@ -33,12 +27,6 @@ class Board:
         self.winner = 0
 
         self.win = False
-
-    def gameOver(self):
-        return self.win
-
-    def getWinner(self):
-        return self.winner
 
     def available(self):
         return np.argwhere(self.board == 0)
@@ -51,9 +39,6 @@ class Board:
 
     def printBoard(self):
         print(self.board)
-
-    def getBoard(self):
-        return self.board
 
     def drawBoard(self):
         for row in self.board:

@@ -14,7 +14,7 @@ class Cache():
             self.states[self.index] = state
             self.scores[self.index] = score
         else:
-            self.states.append(state)
+            self.states.append(np.copy(state))
             self.scores.append(score)
         if self.index >= self.maxSize - 1:
             self.index = 0

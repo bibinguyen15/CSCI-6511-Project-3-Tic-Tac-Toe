@@ -11,6 +11,7 @@ user = 0
 
 
 def main():
+    #localPlayAI()
     personStarts = False
     localPlayPerson(boardSize, target, personStarts)
 
@@ -35,7 +36,7 @@ def localPlayPerson(size, target, playerStart=False):
     board = Board(size, target, user)
 
     board.drawBoard()
-
+    cache = Cache()
     #board.setBoard("XX--O\nOX-X-\n--O--\n--O--\n-----\n", 5)
     #board.drawBoard()
 
@@ -52,7 +53,7 @@ def localPlayPerson(size, target, playerStart=False):
 
         start = time.time()
 
-        bestMove = setMove(board)
+        bestMove = setMove(board, cache)
 
         end = time.time()
 
@@ -66,8 +67,8 @@ def localPlayPerson(size, target, playerStart=False):
 
         # board.print()
 
-        if board.gameOver() or board.isFull():
-            print("Game ended.\nWinner:", board.getWinner())
+        if board.win or board.isFull():
+            print("Game ended.\nWinner:", board.winner)
             return
 
         x, y = int(input("x=")), int(input("y="))
@@ -80,17 +81,17 @@ def localPlayPerson(size, target, playerStart=False):
 
         board.drawBoard()
 
-        if board.gameOver() or board.isFull():
+        if board.win or board.isFull():
             print("Game ended.")
-            if board.getWinner():
-                print("Winner:", board.getWinner())
+            if board.winner:
+                print("Winner:", board.winner)
 
             return
 
         # board.print()
 
 
-def setMove(board):
+def setMove(board, cache):
     available = len(board.available())
 
     if available > 30:
@@ -102,7 +103,7 @@ def setMove(board):
     else:
         constants.maxDepth = 10
 
-    bestMove = nextMove(board, board.getUser())
+    bestMove = nextMove(board, board.user, cache)
     # board.print()
     # print("Best move is:", bestMove)
 
@@ -125,7 +126,7 @@ def localPlayAI():
 
         print("Player's turn:", player)
 
-        if game.getUser() != player:
+        if game.user != player:
             game.switchUser(player)
 
         if not (input("Do you want to make a move (leave empty if not)? ")):
@@ -156,9 +157,9 @@ def localPlayAI():
         if game.isFull():
             print("It's a draw.")
             break
-        elif game.gameOver():
+        elif game.win:
             print("Winner:", end=" ")
-            if game.getWinner() == 1:
+            if game.winner == 1:
                 print(game.getPlayer(player))
             else:
                 print(game.getPlayer(player - 1))
