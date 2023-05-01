@@ -106,8 +106,10 @@ def setMove(gameId, board):
     available = len(board.available())
 
     #print("Game ID is:", gameId)
-
-    if available > 30:
+    if available > board.totalMoves - board.target - 1:
+        # if available > 80:
+        constants.maxDepth = 1
+    elif available > 30:
         constants.maxDepth = 2
     elif available > 25:
         constants.maxDepth = 3
