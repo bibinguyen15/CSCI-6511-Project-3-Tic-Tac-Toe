@@ -93,8 +93,10 @@ def localPlayPerson(size, target, playerStart=False):
 
 def setMove(board, cache):
     available = len(board.available())
-
-    if available > 30:
+    if available > board.totalMoves - board.target - 1:
+        #if available > 80:
+        constants.maxDepth = 1
+    elif available > 30:
         constants.maxDepth = 2
     elif available > 20:
         constants.maxDepth = 3
