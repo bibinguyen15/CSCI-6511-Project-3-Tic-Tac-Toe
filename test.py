@@ -186,25 +186,27 @@ def finalHeuristic(board):
     return score
 
 
-#Aditya's
-board = Board()
-board.setBoard("XX--O\nOX-X-\n--O--\n--O--\n-----\n", 5)
+##Aditya's
+#board = Board()
+#board.setBoard("XX--O\nOX-X-\n--O--\n--O--\n-----\n", 5)
 
-a1 = time.time()
-score = 0
-for i in range(100000):
-    score += finalHeuristic(board) - 3
+#a1 = time.time()
+#score = 0
+#for i in range(100000):
+    #score += finalHeuristic(board) - 3
 
-a2 = time.time()
+#a2 = time.time()
 
-print(score, a2 - a1)
+#print(score, a2 - a1)
 
 
-c1 = time.time()
-score = 0
-for i in range(100000):
-    score += heuristic(board) - 3
+#c1 = time.time()
+#score = 0
+#for i in range(100000):
+    #score += heuristic(board) - 3
 
-c2 = time.time()
+#c2 = time.time()
 
-print(score, c2 - c1)
+#print(score, c2 - c1)
+
+print(type(np.zeros(3)[0]))

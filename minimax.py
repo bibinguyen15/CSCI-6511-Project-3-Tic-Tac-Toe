@@ -6,7 +6,7 @@ import math
 from cache import Cache
 
 
-def minimax(board, cache, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
+def minimax(board, depth, isMax, alpha=constants.MIN, beta=constants.MAX):
     #board.print()
 
     if board.win:
@@ -52,7 +52,7 @@ def minimax(board, cache, depth, isMax, alpha=constants.MIN, beta=constants.MAX)
             board.add(cell, board.user)
 
             # Call minimax recursively and choose the maximum value
-            score = minimax(board, cache,
+            score = minimax(board,
                             depth + 1, False, alpha, beta)
 
             best = max(best, score)
@@ -85,7 +85,7 @@ def minimax(board, cache, depth, isMax, alpha=constants.MIN, beta=constants.MAX)
             #board.drawBoard()
 
             # Call minimax recursively and choose the maximum value
-            score = minimax(board, cache,
+            score = minimax(board,
                             depth + 1, True, alpha, beta)
 
             best = min(best, score)
@@ -99,7 +99,7 @@ def minimax(board, cache, depth, isMax, alpha=constants.MIN, beta=constants.MAX)
         return best
 
 
-def nextMove(board, player, cache):
+def nextMove(board, player):
     if board.isEmpty():
         bestMove = [board.size // 2, board.size // 2]
     elif board.board[board.size // 2][board.size // 2] == 0:
@@ -125,7 +125,7 @@ def nextMove(board, player, cache):
             board.add(cell, player)
 
             # Call minimax
-            move = minimax(board, cache, 0, False, MIN, MAX)
+            move = minimax(board, 0, False, MIN, MAX)
 
             moveScore[(cell[0], cell[1])] = move
 
@@ -178,12 +178,13 @@ def checkDiagonalRight(move, board, turn):
         jx += 1
         jy += 1
     if jx - right + continuous >= board.target and left - ix + continuous >= board.target:
-        return (5 * continuous + jx - right + left - ix)
-
+        #return (10 * continuous + jx - right + left - ix)
+        return 4 ** continuous
     elif jx - ix - 1 < board.target:
         return 0
     else:
-        return 5 * continuous
+        #return 10 * continuous
+        return math.pow(4, (continuous - 1))
 
 
 def checkDiagonalLeft(move, board, turn):
@@ -208,12 +209,13 @@ def checkDiagonalLeft(move, board, turn):
         jx += 1
         jy -= 1
     if jx - right + continuous >= board.target and left - ix + continuous >= board.target:
-        return (5 * continuous + jx - right + left - ix)
-
+        #return (10 * continuous + jx - right + left - ix)
+        return 4 ** continuous
     elif jx - ix - 1 < board.target:
         return 0
     else:
-        return 5 * continuous
+        #return 10 * continuous
+        return math.pow(4, (continuous - 1))
 
 
 def checkRow(move, board, turn):
@@ -234,12 +236,13 @@ def checkRow(move, board, turn):
         j += 1
 
     if j - right + continuous >= board.target and left - i + continuous >= board.target:
-        return (5 * continuous + j - right + left - i)
-
+        #return (10 * continuous + j - right + left - i)
+        return 4**continuous
     elif j - i - 1 < board.target:
         return 0
     else:
-        return 5 * continuous
+        #return 10 * continuous
+        return math.pow(4, (continuous - 1))
 
 
 def checkCol(move, board, turn):
@@ -261,11 +264,13 @@ def checkCol(move, board, turn):
         j += 1
 
     if j - right + continuous >= board.target and left - i + continuous >= board.target:
-        return (5 * continuous + j - right + left - i)
+        #return (10 * continuous + j - right + left - i)
+        return 4 ** continuous
     elif j - i - 1 < board.target:
         return 0
     else:
-        return 5 * continuous
+        #return 10 * continuous
+        return math.pow(4, (continuous - 1))
 
 
 def heuristic(board):
@@ -339,11 +344,14 @@ def perLine(line, target):
         return 100000 * turn
 
     if nonZeros == target - 1:
-        return 500 * turn
-    if nonZeros == target - 2:
-        return 200 * turn
+        return 5000 * turn
+    #if nonZeros == target - 2:
+        #return 2000 * turn
+    #if nonZeros == target - 3:
+        #return 1000 * turn
 
-    return (nonZeros * 5 + target - nonZeros) * turn
+    #return (nonZeros * 10 + target - nonZeros) * turn
+    return (nonZeros * nonZeros) * turn
 
 
 def checkOccupied(board):

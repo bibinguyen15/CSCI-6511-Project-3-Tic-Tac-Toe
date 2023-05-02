@@ -16,7 +16,7 @@ def main():
     localPlayPerson(boardSize, target, personStarts)
 
     # localPlayAI()
-    teamId2 = '1358'
+    teamId2 = '1339'
     gameId = 0
     opponentStarts = False
 
@@ -36,7 +36,6 @@ def localPlayPerson(size, target, playerStart=False):
     board = Board(size, target, user)
 
     board.drawBoard()
-    cache = Cache()
     #board.setBoard("XX--O\nOX-X-\n--O--\n--O--\n-----\n", 5)
     #board.drawBoard()
 
@@ -53,7 +52,7 @@ def localPlayPerson(size, target, playerStart=False):
 
         start = time.time()
 
-        bestMove = setMove(board, cache)
+        bestMove = setMove(board)
 
         end = time.time()
 
@@ -91,12 +90,11 @@ def localPlayPerson(size, target, playerStart=False):
         # board.print()
 
 
-def setMove(board, cache):
+def setMove(board):
     available = len(board.available())
-    if available > board.totalMoves - board.target - 1:
-        #if available > 80:
-        constants.maxDepth = 1
-    elif available > 30:
+    #if available > board.totalMoves - 3 and available > 90:
+    #constants.maxDepth = 1
+    if available > 30:
         constants.maxDepth = 2
     elif available > 20:
         constants.maxDepth = 3
@@ -105,7 +103,7 @@ def setMove(board, cache):
     else:
         constants.maxDepth = 10
 
-    bestMove = nextMove(board, board.user, cache)
+    bestMove = nextMove(board, board.user)
     # board.print()
     # print("Best move is:", bestMove)
 
