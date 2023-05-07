@@ -137,6 +137,7 @@ def nextMove(board, player):
     return bestMove
 
 
+
 def moveHeu(move, board, turn):
     score = 0
 
@@ -146,16 +147,16 @@ def moveHeu(move, board, turn):
         board.remove(move)
         return 10000 * turn
 
-    score += checkCol(move, board, turn) + checkRow(move, board, turn) + \
-        checkDiagonalLeft(move, board, turn) + \
-        checkDiagonalRight(move, board, turn)
+    score += column(move, board, turn) + row(move, board, turn) + \
+             leftDiag(move, board, turn) + \
+             rightDiag(move, board, turn)
 
     board.remove(move)
 
     return score * turn
 
 
-def checkDiagonalRight(move, board, turn):
+def rightDiag(move, board, turn):
     x, y = move
     ix = jx = x
     iy = jy = y
@@ -177,15 +178,15 @@ def checkDiagonalRight(move, board, turn):
         jx += 1
         jy += 1
     if jx - right + continuous >= board.target and left - ix + continuous >= board.target:
-        return (5 * continuous + jx - right + left - ix)
+        return (10 * continuous + jx - right + left - ix)
 
     elif jx - ix - 1 < board.target:
         return 0
     else:
-        return 5 * continuous
+        return 10 * continuous
 
 
-def checkDiagonalLeft(move, board, turn):
+def leftDiag(move, board, turn):
     x, y = move
     ix = jx = x
     iy = jy = y
@@ -207,15 +208,15 @@ def checkDiagonalLeft(move, board, turn):
         jx += 1
         jy -= 1
     if jx - right + continuous >= board.target and left - ix + continuous >= board.target:
-        return (5 * continuous + jx - right + left - ix)
+        return (10 * continuous + jx - right + left - ix)
 
     elif jx - ix - 1 < board.target:
         return 0
     else:
-        return 5 * continuous
+        return 10 * continuous
 
 
-def checkRow(move, board, turn):
+def row(move, board, turn):
     x, y = move
     i = j = x
     opponent = 1 if turn == -1 else -1
@@ -233,15 +234,14 @@ def checkRow(move, board, turn):
         j += 1
 
     if j - right + continuous >= board.target and left - i + continuous >= board.target:
-        return (5 * continuous + j - right + left - i)
-
+        return (10 * continuous + j - right + left - i)
     elif j - i - 1 < board.target:
         return 0
     else:
-        return 5 * continuous
+        return 10 * continuous
 
 
-def checkCol(move, board, turn):
+def column(move, board, turn):
     x, y = move
     i = j = y
     opponent = 1 if turn == -1 else -1
@@ -260,11 +260,12 @@ def checkCol(move, board, turn):
         j += 1
 
     if j - right + continuous >= board.target and left - i + continuous >= board.target:
-        return (5 * continuous + j - right + left - i)
+        return (10 * continuous + j - right + left - i)
     elif j - i - 1 < board.target:
         return 0
     else:
-        return 5 * continuous
+        return 10 * continuous
+
 
 
 def heuristic(board):
